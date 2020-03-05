@@ -1,0 +1,157 @@
+0	Robust pronoun resolution with limited knowledge
+0	Most traditional approaches to anaphora resolution rely heavily on linguistic and domain knowledge.
+0	One of the disadvantages of developing a knowledge­ based system, however, is that it is a very labour­ intensive and time-consuming task.
+0	This paper pres­ ents a robust, knowledge-poor approach to resolving pronouns in technical manuals, which operates on texts pre-processed by a part-of-speech tagger.
+0	Input is checked against agreement and for a number of antecedent indicators.
+0	Candidates are assigned scores by each indicator and the candidate with the highest score is returned as the antecedent.
+0	Evaluation reports a success rate of 89.7% which is better than the suc­ cess rates of the approaches selected for comparison and tested on the same data.
+0	In addition, preliminary experiments show that the approach can be success­ fully adapted for other languages with minimum modifications.
+0	For the most part, anaphora resolution has focused on traditional linguistic methods (Carbonell & Brown 1988; Carter 1987; Hobbs 1978; Ingria & Stallard 1989; Lappin & McCord 1990; Lappin & Leass 1994; Mitkov 1994; Rich & LuperFoy 1988; Sidner 1979; Webber 1979).
+0	However, to represent and manipulate the various types of linguistic and domain knowledge involved requires considerable human input and computational expense.
+0	While various alternatives have been proposed, making use of e.g. neural networks, a situation se­ mantics framework, or the principles of reasoning with uncertainty (e.g. Connoly et al. 1994; Mitkov 1995; Tin & Akman 1995), there is still a strong need for the development of robust and effective strategies to meet the demands of practical NLP systems, and to enhance further the automatic pro­ cessing of growing language resources.
+0	Several proposals have already addressed the anaphora resolution problem by deliberately limiting the extent to which they rely on domain and/or lin­ guistic knowledge (Baldwin 1997; Dagan & ltai 1990; Kennedy & Boguraev 1996; Mitkov 1998; Nasukawa 1994; Williams et al. 1996).
+0	Our work is a continuation of these latest trends in the search for inexpensive, fast and reliable procedures for anaph­ ora resolution.
+0	It is also an example of how anaphors in a specific genre can be resolved quite successfully without any sophisticated linguistic knowledge or even without parsing.
+0	Finally, our evaluation shows that the basic set of antecedent tracking indicators can work well not only for English, but also for other languages (in our case Polish and Arabic).
+0	With a view to avoiding complex syntactic, seman­ tic and discourse analysis (which is vital for real­ world applications), we developed a robust, knowl­ edge-poor approach to pronoun resolution which does not parse and analyse the input in order to identify antecedents of anaphors.
+0	It makes use of only a part-of-speech tagger, plus simple noun phrase rules (sentence constituents are identified at the level of noun phrase at most) and operates on the basis of antecedent-tracking preferences (referred to hereafter as "antecedent indicators").
+0	The approach works as follows: it takes as an input the output of a text processed by a part-of-speech tagger, identifies the noun phrases which precede the anaphor within a distance of 2 sentences, checks them for gender and number agreement with the anaphor and then applies the genre-specific antecedent indicators to the re­ maining candidates (see next section).
+0	The noun phrase with the highest aggregate score is proposed as antecedent; in the rare event of a tie, priority is given to the candidate with the higher score for im­ mediate reference.
+0	If immediate reference has not been identified, then priority is given to the candi date with the best collocation pattern score.
+0	If this does not help, the candidate with the higher score for indicating verbs is preferred.
+0	If still no choice is possible, the most recent from the remaining candi­ dates is selected as the antecedent.
+0	2.1 Antecedent indicators.
+0	Antecedent indicators (preferences) play a decisive role in tracking down the antecedent from a set of possible candidates.
+0	Candidates are assigned a score (-1, 0, 1 or 2) for each indicator; the candidate with the highest aggregate score is proposed as the ante­ cedent.
+1	The antecedent indicators have been identi­ fied empirically and are related to salience (definiteness, givenness, indicating verbs, lexical reiteration, section heading preference, "non­ prepositional" noun phrases), to structural matches (collocation, immediate reference), to referential distance or to preference of terms.
+0	Whilst some of the indicators are more genre-specific (term prefer­ ence) and others are less genre-specific ("immediate reference"), the majority appear to be genre­ independent.
+0	In the following we shall outline some the indicators used and shall illustrate them by ex­ amples.
+0	Definiteness Definite noun phrases in previous sentences are more likely antecedents of pronominal anaphors than indefinite ones (definite noun phrases score 0 and indefinite ones are penalised by -1).
+0	We regard a noun phrase as definite if the head noun is modified by a definite article, or by demonstrative or posses­ sive pronouns.
+0	This rule is ignored if there are no definite articles, possessive or demonstrative pro­ nouns in the paragraph (this exception is taken into account because some English user's guides tend to omit articles).
+0	Givenness Noun phrases in previous sentences representing the "given information" (theme) 1 are deemed good candidates for antecedents and score I (candidates not representing the theme score 0).
+0	In a coherent text (Firbas 1992), the given or known information, or theme, usually appears first, and thus forms a co­ referential link with the preceding text.
+0	The new information, or rheme, provides some information about the theme.
+0	1We use the simple heuristics that the given information is the first noun phrase in a non-imperative sentence.
+0	Indicating verbs If a verb is a member of the Verb_set = {discuss, present, illustrate, identify, summarise, examine, describe, define, show, check, develop, review, re­ port, outline, consider, investigate, explore, assess, analyse, synthesise, study, survey, deal, cover}, we consider the first NP following it as the preferred an­ tecedent (scores 1 and 0).
+0	Empirical evidence sug­ gests that because of the salience of the noun phrases which follow them, the verbs listed above are particularly good indicators.
+0	Lexical reiteration Lexically reiterated items are likely candidates for antecedent (a NP scores 2 if is repeated within the same paragraph twice or more, 1 if repeated once and 0 if not).
+0	Lexically reiterated items include re­ peated synonymous noun phrases which may often be preceded by definite articles or demonstratives.
+0	Also, a sequence of noun phrases with the same head counts as lexical reiteration (e.g. "toner bottle", "bottle of toner", "the bottle").
+0	Section heading preference If a noun phrase occurs in the heading of the section, part of which is the current sentence, then we con­ sider it as the preferred candidate (1, 0).
+0	"Non-prepositional" noun phrases A "pure", "non-prepositional" noun phrase is given a higher preference than a noun phrase which is part of a prepositional phrase (0, -1 ).
+0	Example: Insert the cassettei into the VCR making sure iti is suitable for the length of recording.
+0	Here "the VCR" is penalised (-1) for being part of the prepositional phrase "into the VCR".
+0	This preference can be explained in terms of sali­ ence from the point of view of the centering theory.
+0	The latter proposes the ranking "subject, direct ob­ ject, indirect object" (Brennan et al. 1987) and noun phrases which are parts of prepositional phrases are usually indirect objects.
+0	Collocation pattern preference This preference is given to candidates which have an identical collocation pattern with a pronoun (2,0).
+0	The collocation preference here is restricted to the patterns "noun phrase (pronoun), verb" and "verb, noun phrase (pronoun)".
+0	Owing to lack of syntactic information, this preference is somewhat weaker than the collocation preference described in (Dagan & ltai 1990).
+0	Example: Press the keyi down and turn the volume up...
+0	Press iti again.
+0	Immediate reference In technical manuals the "immediate reference" clue can often be useful in identifying the antecedent.
+0	The heuristics used is that in constructions of the form "...(You) V 1 NP ... con (you) V 2 it (con (you) V3 it)", where con e {and/or/before/after...}, the noun phrase immediately after V 1 is a very likely candidate for antecedent of the pronoun "it" imme­ diately following V2 and is therefore given preference (scores 2 and 0).
+0	This preference can be viewed as a modification of the collocation preference.
+0	It is also quite fre­ quent with imperative constructions.
+0	Example: To print the paper, you can stand the printeri up or lay iti flat.
+0	To turn on the printer, press the Power buttoni and hold iti down for a moment.
+0	Unwrap the paperi• form iti and align iti• then load iti into the drawer.
+0	Referential distance In complex sentences, noun phrases in the previous clause2 are the best candidate for the antecedent of an anaphor in the subsequent clause, followed by noun phrases in the previous sentence, then by nouns situated 2 sentences further back and finally nouns 3 sentences further back (2, 1, 0, -1).
+0	For anaphors in simple sentences, noun phrases in the previous sen­ tence are the best candidate for antecedent, followed by noun phrases situated 2 sentences further back and finally nouns 3 sentences further back {1, 0, -1).
+0	Term preference NPs representing terms in the field are more likely to be the antecedent than NPs which are not terms (score 1 if the NP is a term and 0 if not).
+0	21dentification of clauses in complex sentences is do e heuristically.
+0	As already mentioned, each of the antecedent in­ dicators assigns a score with a value {-1, 0, 1, 2}.
+0	These scores have been determined experimentally on an empirical basis and are constantly being up­ dated.
+0	Top symptoms like "lexical reiteration" as­ sign score "2" whereas "non-prepositional" noun phrases are given a negative score of "-1".
+0	We should point out that the antecedent indicators are preferences and not absolute factors.
+0	There might be cases where one or more of the antecedent indicators do not "point" to the correct antecedent.
+0	For in­ stance, in the sentence "Insert the cassette into the VCRi making sure iti is turned on", the indicator "non-prepositional noun phrases" would penalise the correct antecedent.
+0	When all preferences (antecedent indicators) are taken into account, however, the right antecedent is still very likely to be tracked down - in the above example, the "non-prepositional noun phrases" heuristics (penalty) would be overturned by the "collocational preference" heuristics.
+0	2.2 Informal description of the algorithm.
+0	The algorithm for pronoun resolution can be de­ scribed informally as follows: 1.
+0	Examine the current sentence and the two pre­.
+0	ceding sentences (if available).
+0	Look for noun phrases3 only to the left of the anaphor4 2.
+0	Select from the noun phrases identified only.
+0	those which agree in gender and numberS with the pronominal anaphor and group them as a set of potential candidates
+0	tial candidate and assign scores; the candidate with the highest aggregate score is proposed as 3A sentence splitter would already have segmented the text into sentences, a POS tagger would already have determined the parts of speech and a simple phrasal grammar would already have detected the noun phrases 4In this project we do not treat cataphora; non-anaphoric "it" occurring in constructions such as "It is important", "It is necessary" is eliminated by a "referential filter" 5Note that this restriction may not always apply in lan­ guages other than English (e.g. German); on the other hand, there are certain collective nouns in English which do not agree in number with their antecedents (e.g. "government", "team", "parliament" etc. can be referred to by "they"; equally some plural nouns (e.g. "data") can be referred to by "it") and are exempted from the agree­ ment test.
+0	For this purpose we have drawn up a compre­ hensive list of all such cases; to our knowledge, no other computational treatment of pronominal anaphora resolu­ tion has addressed the problem of "agreement excep­ tions".
+0	antecedent.
+0	If two candidates have an equal score, the candidate with the higher score for immediate reference is proposed as antecedent.
+0	If immediate reference does not hold, propose the candidate with higher score for collocational pattern.
+0	If collocational pattern suggests a tie or does not hold, select the candidate with higher score for indicating verbs.
+0	If this indicator does not hold again, go for the most recent candidate.
+0	3.
+0	Evaluation.
+0	For practical reasons, the approach presented does not incorporate syntactic and semantic information (other than a list of domain terms) and it is not real­ istic to expect its performance to be as good as an approach which makes use of syntactic and semantic knowledge in terms of constraints and preferences.
+0	The lack of syntactic information, for instance, means giving up c-cornmand constraints and subject preference (or on other occasions object preference, see Mitkov I995) which could be used in center tracking.
+0	Syntactic parallelism, useful in discrimi­ nating between identical pronouns on the basis of their syntactic function, also has to be forgone.
+0	Lack of semantic knowledge rules out the use of verb se­ mantics and semantic parallelism.
+0	Our evaluation, however, suggests that much less is lost than might be feared.
+0	In fact, our evaluation shows that the re­ sults are comparable to syntax-based methods (Lappin & Leass I994).
+0	We believe that the good success rate is due to the fact that a number of ante­ cedent indicators are taken into account and no fac­ tor is given absolute preference.
+0	In particular, this strategy can often override incorrect decisions linked with strong centering preference (Mitkov & Belguith I998) or syntactic and semantic parallelism prefer­ ences (see below).
+0	3.1 Evaluation A. Our first evaluation exercise (Mitkov & Stys 1997) was based on a random sample text from a technical manual in English (Minolta 1994).
+0	There were 71 pronouns in the 140 page technical manual; 7 of the pronouns were non-anaphoric and 16 exophoric.
+0	The resolution of anaphors was carried out with a suc­ cess rate of 95.8%.
+0	The approach being robust (an attempt is made to resolve each anaphor and a pro­ posed antecedent is returned), this figure represents both "precision" and "recall" if we use the MUC terminology.
+0	To avoid any terminological confusion, we shall therefore use the more neutral term "success rate" while discussing the evaluation.
+0	In order to evaluate the effectiveness of the ap­ proach and to explore if I how far it is superior over the baseline models for anaphora resolution, we also tested the sample text on (i) a Baseline Model which checks agreement in number and gender and, where more than one candidate remains, picks as antece­ dent the most recent subject matching the gender and number of the anaphor (ii) a Baseline Model which picks as antecedent the most recent noun phrase that matches the gender and number of the anaphor.
+0	The success rate of the "Baseline Subject" was 29.2%, whereas the success rate of "Baseline Most Recent NP" was 62.5%.
+0	Given that our knowledge­ poor approach is basically an enhancement of a baseline model through a set of antecedent indica­ tors, we see a dramatic improvement in performance (95.8%) when these preferences are called upon.
+0	Typically, our preference-based model proved superior to both baseline models when the antece­ dent was neither the most recent subject nor the most recent noun phrase matching the anaphor in gender and number.
+0	Example: Identify the draweq by the lit paper port LED and add paper to itj.
+0	The aggregate score for "the drawer" is 7 (definiteness 1 + givenness 0 + term preference 1 + indicating verbs I + lexical reiteration 0 + section heading 0 + collocation 0 + referential distance 2 + non-prepositional noun phrase 0 + immediate refer­ ence 2 = 7), whereas aggregate score for the most recent matching noun phrase ("the lit paper port LED") is 4 (definiteness 1 + givenness 0 + term preference I + indicating verbs 0 + lexical reitera­ tion 0 + section heading 0 + collocation 0 + referen­ tial distance 2 + non-prepositional noun phrase 0 + immediate reference 0 = 4).
+0	From this example we can also see that our knowledge-poor approach successfully tackles cases in which the anaphor and the· antecedent have not only different syntactic functions but also different semantic roles.
+0	Usually knowledge-based ap­ proaches have difficulties in such a situation because they use preferences such as "syntactic parallelism" or "semantic parallelism".
+0	Our robust approach does not use these because it has no information about the syntactic structure of the sentence or about the syn­ tactic function/semantic role of each individual word.
+0	As far as the typical failure cases are concerned, we anticipate the knowledge-poor approach to have difficulties with sentences which have a more com­ plex syntactic structure.
+0	This should not be surpris ing, given that the approach does not rely on any syntactic knowledge and in particular, it does not produce any parse tree.
+0	Indeed, the approach fails on the sentence: The paper through key can be used to feed [a blank sheet of paper]j through the copier out into the copy tray without making a copy on itj.
+0	where "blank sheet of paper" scores only 2 as op­ posed to the "the paper through key" which scores 6.
+0	3.2 Evaluation B. We carried out a second evaluation of the approach on a different set of sample texts from the genre of technical manuals (47-page Portable Style-Writer User's Guide (Stylewriter 1994).
+0	Out of 223 pro­ nouns in the text, 167 were non-anaphoric (deictic and non-anaphoric "it").
+0	The evaluation carried out was manual to ensure that no added error was gen­ erated (e.g. due to possible wrong sentence/clause detection or POS tagging).
+0	Another reason for doing it by hand is to ensure a fair comparison with Breck Baldwin's method, which not being available to us, had to be hand-simulated (see 3.3).
+0	The evaluation indicated 83.6% success rate.
+0	The "Baseline subject" model tested on the same data scored 33.9% recall and 67.9% precision, whereas "Baseline most recent" scored 66.7%.
+0	Note that "Baseline subject" can be assessed both in terms of recall and precision because this "version" is not robust: in the event of no subject being available, it is not able to propose an antecedent (the manual guide used as evaluation text contained many im­ perative zero-subject sentences).
+0	In the second experiment we evaluated the ap­ proach from the point of view also of its "critical success rate".
+0	This measure (Mitkov 1998b) applies only to anaphors "ambiguous" from the point of view of number and gender (i.e. to those "tough" anaphors which, after activating the gender and number filters, still have more than one candidate for antecedent) and is indicative of the performance of the antecedent indicators.
+0	Our evaluation estab­ lished the critical success rate as 82%.
+0	A case where the system failed was when the anaphor and the antecedent were in the same sen­ tence and where preference was given to a candidate in the preceding sentence.
+0	This case and other cases suggest that it might be worthwhile reconsider­ ing/refining the weights for the indicator "referential distance".
+0	Similarly to the first evaluation, we found that the robust approach was not very successful on sen­ tences with too complicated syntax - a price we have to pay for the "convenience" of developing a knowl­ edge-poor system.
+0	The results from experiment 1 and experiment 2 can be summarised in the following (statistically) slightly more representative figures.
+0	R ob ust aQ pr oa ch B a s el i n e s u b je ct B as eli ne m os t re ce nt Su cc es s rat e (= Pr ec isi on / Re ca ll) 8 9.
+0	7 % 31.
+0	55 % I 48 .5 5 % 6 5 . 9 5 % The lower figure in "Baseline subject" corresponds to "recall" and the higher figure- to "precision".
+0	If we regard as "discriminative power" of each antecedent indicator the ratio "number of successful antecedent identifications when this indicator was applied"/"number of applications of this indicator" (for the non-prepositional noun phrase and definite­ ness being penalising indicators, this figure is calcu­ lated as the ratio "number of unsuccessful antece­ dent identifications"/"number of applications"), the immediate reference emerges as the most discrimi­ native indicator (100%), followed by non­ prepositional noun phrase (92.2%), collocation (90.9%), section heading (61.9%), lexical reiteration (58.5%), givenness (49.3%), term preference (35.7%) and referential distance (34.4%).
+0	The rela­ tively low figures for the majority of indicators should not be regarded as a surprise: firstly, we should bear in mind that in most cases a candidate was picked (or rejected) as an antecedent on the ba­ sis of applying a number of different indicators and secondly, that most anaphors had a relatively high number of candidates for antecedent.
+0	In terms of frequency of use ("number of nonzero applications"/"number of anaphors"), the most fre­ quently used indicator proved to be referential dis­ tance used in 98.9% of the cases, followed by term preference (97.8%), givenness (83.3%), lexical reit­ eration (64.4%), definiteness (40%), section heading (37.8%), immediate reference (31.1%) and colloca­ tion (11.1%).
+0	As expected, the most frequent indica­ tors were not the most discriminative ones.
+0	3.3 Comparison to similar approaches: compara­.
+0	tive evaluation of Breck Baldwin's CogNIAC We felt appropriate to extend the evaluation of our approach by comparing it to Breck Baldwin's Cog­ NIAC (Baldwin 1997) approach which features "high precision coreference with limited knowledge and linguistics resources".
+0	The reason is that both our approach and Breck Baldwin's approach share common principles (both are knowledge-poor and use a POS tagger to provide the input) and therefore a comparison would be appropriate.
+0	Given that our approach is robust and returns an­ tecedent for each pronoun, in order to make the comparison as fair as possible, we used CogNIAC's "resolve all" version by simulating it manually on the same training data used in evaluation B above.
+0	CogNIAC successfully resolved the pronouns in 75% of the cases.
+0	This result is comparable with the results described in (Baldwin 1997).
+0	For the training data from the genre of technical manuals, it was rule 5 (see Baldwin 1997) which was most frequently used (39% of the cases, 100% success), followed by rule 8 (33% of the cases, 33% success), rule 7 (11%, 100%), rule I (9%, 100%) and rule 3 (7.4%, 100%).
+0	It would be fair to say that even though the results show superiority of our approach on the training data used (the genre of technical manuals), they cannot be generalised automatically for other genres or unrestricted texts and for a more accurate picture, further extensive tests are necessary.
+0	languages An attractive feature of any NLP approach would be its language "universality".
+0	While we acknowledge that most of the monolingual NLP approaches are not automatically transferable (with the same degree of efficiency) to other languages, it would be highly desirable if this could be done with minimal adapta­ tion.
+0	We used the robust approach as a basis for devel­ oping a genre-specific reference resolution approach in Polish.
+0	As expected, some of the preferences had to be modified in order to fit with specific features of Polish (Mitkov & Stys 1997).
+0	For the time being, we are using the same scores for Polish.
+0	The evaluation for Polish was based technical manuals available on the Internet (Internet Manual, 1994; Java Manual 1998).
+0	The sample texts con­ tained 180 pronouns among which were 120 in­ stances of exophoric reference (most being zero pro­ nouns).
+0	The robust approach adapted for Polish demonstrated a high success rate of 93.3% in resolv­ ing anaphors (with critical success rate of 86.2%).
+0	Similarly to the evaluation for English, we com­ pared the approach for Polish with (i) a Baseline Model which discounts candidates on the basis of agreement in number and gender and, if there were still competing candidates, selects as the antecedent the most recent subject matching the anaphor in gender and number (ii) a Baseline Model which checks agreement in number and gender and, if there were still more than one candidate left, picks up as the antecedent the most recent noun phrase that agrees with the anaphor.
+0	Our preference-based approach showed clear su­ periority over both baseline models.
+0	The first Base­ line Model (Baseline Subject) was successful in only 23.7% of the cases, whereas the second (Baseline Most Recent) had a success rate of 68.4%.
+0	There­ fore, the 93.3% success rate (see above) demon­ strates a dramatic increase in precision, which is due to the use of antecedent tracking preferences.
+0	We have recently adapted the approach for Ara­ bic as well (Mitkov & Belguith 1998).
+0	Our evalua­ tion, based on 63 examples (anaphors) from a tech­ nical manual (Sony 1992), indicates a success rate of 95.2% (and critical success rate 89.3 %).
+0	We have described a robust, knowledge-poor ap­ proach to pronoun resolution which operates on texts pre-processed by a part-of-speech tagger.
+0	Evaluation shows a success rate of 89.7% for the genre of tech­ nical manuals and at least in this genre, the approach appears to be more successful than other similar methods.
+0	We have also adapted and evaluated the approach for Polish (93.3 % success rate) and for Arabic (95.2% success rate).

@@ -1,0 +1,190 @@
+0	Using Random Walks for Question-focused Sentence Retrieval
+0	We consider the problem of question-focused sentence retrieval from complexnews articles describing multi-event stories published over time.
+0	Annotators generated a list of questions central to understanding each story in our corpus.
+0	Because of the dynamic nature of the stories,many questions are time-sensitive (e.g.How many victims have been found?)Judges found sentences providing an answer to each question.
+0	To address thesentence retrieval problem, we apply astochastic, graph-based method for comparing the relative importance of the textual units, which was previously used successfully for generic summarization.
+0	Currently, we present a topic-sensitive versionof our method and hypothesize that it canoutperform a competitive baseline, whichcompares the similarity of each sentenceto the input question via IDFweightedword overlap.
+0	In our experiments, themethod achieves a TRDR score that is significantly higher than that of the baseline.
+0	Recent work has motivated the need for systemsthat support Information Synthesis tasks, in whicha user seeks a global understanding of a topic orstory (Amigo et al., 2004).
+0	In contrast to the classical question answering setting (e.g. TREC-style Q&A (Voorhees and Tice, 2000)), in which the userpresents a single question and the system returns acorresponding answer (or a set of likely answers), inthis case the user has a more complex informationneed.
+0	Similarly, when reading about a complex newsstory, such as an emergency situation, users mightseek answers to a set of questions in order to understand it better.
+0	For example, Figure 1 showsthe interface to our Web-based news summarizationsystem, which a user has queried for informationabout Hurricane Isabel.
+0	Understanding such storiesis challenging for a number of reasons.
+0	In particular,complex stories contain many sub-events (e.g. thedevastation of the hurricane, the relief effort, etc.) Inaddition, while some facts surrounding the situationdo not change (such as Which area did the hurricane first hit?), others may change with time (Howmany people have been left homeless?).
+0	Therefore, we are working towards developing a systemfor question answering from clusters of complex stories published over time.
+0	As can be seen at the bottom of Figure 1, we plan to add a component to ourcurrent system that allows users to ask questions asthey read a story.
+0	They may then choose to receiveeither a precise answer or a question-focused summary.
+0	Currently, we address the question-focused sentence retrieval task.
+0	While passage retrieval (PR) isclearly not a new problem (e.g.
+0	(Robertson et al.,1992; Salton et al., 1993)), it remains important andyet often overlooked.
+0	As noted by (Gaizauskas et al.,2004), while PR is the crucial first step for questionanswering, Q&A research has typically not empha915 Hurricane Isabel's outer bands moving onshoreproduced on 09/18, 6:18 AM 2% SummaryThe North Carolina coast braced for a weakened but still potent Hurricane Isabel while already rain-soaked areas as faraway as Pennsylvania prepared for possibly ruinous flooding.
+0	(2:3) A hurricane warning was in effect from CapeFear in southern North Carolina to the VirginiaMaryland line, and tropical storm warnings extended from South Carolinato New Jersey.
+0	(2:14) While the outer edge of the hurricane approached the North Carolina coast Wednesday, the center of the storm was still400 miles south-southeast of Cape Hatteras, N.C., late Wednesday morning.
+0	(3:10) BBC NEWS World AmericasHurricane Isabel prompts US shutdown (4:1) Ask us:What states have been affected by the hurricane so far?
+0	Around 200,000 people in coastal areas of North Carolina and Virginia were ordered to evacuate or risk getting trappedby flooding from storm surges up to 11 feet.
+0	(5:8) The storm was expected to hit with its full fury today, slamming intothe North Carolina coast with 105mph winds and 45-foot wave crests, before moving through Virginia and bashing thecapital with gusts of about 60 mph.
+0	(7:6) Figure 1: Question tracking interface to a summarization system.
+0	sized it.
+0	The specific problem we consider differsfrom the classic task of PR for a Q&A system ininteresting ways, due to the time-sensitive nature ofthe stories in our corpus.
+0	For example, one challengeis that the answer to a users question may be updated and reworded over time by journalists in orderto keep a running story fresh, or because the factsthemselves change.
+0	Therefore, there is often morethan one correct answer to a question.We aim to develop a method for sentence retrieval that goes beyond finding sentences that aresimilar to a single query.
+0	To this end, we propose to use a stochastic, graph-based method.
+0	Recently, graph-based methods have proved useful fora number of NLP and IR tasks such as documentre-ranking in ad hoc IR (Kurland and Lee, 2005)and analyzing sentiments in text (Pang and Lee,2004).
+0	In (Erkan and Radev, 2004), we introducedthe LexRank method and successfully applied it togeneric, multi-document summarization.
+0	Presently,we introduce topic-sensitive LexRank in creating asentence retrieval system.
+0	We evaluate its performance against a competitive baseline, which considers the similarity between each sentence and thequestion (using IDF-weighed word overlap).
+0	Wedemonstrate that LexRank significantly improvesquestion-focused sentence selection over the baseline.
+1	Our goal is to build a question-focused sentence retrieval mechanism using a topic-sensitive version ofthe LexRank method.
+0	In contrast to previous PR systems such as Okapi (Robertson et al., 1992), which ranks documents for relevancy and then proceeds tofind paragraphs related to a question, we address thefinergrained problem of finding sentences containing answers.
+0	In addition, the input to our system isa set of documents relevant to the topic of the querythat the user has already identified (e.g. via a searchengine).
+0	Our system does not rank the input documents, nor is it restricted in terms of the number ofsentences that may be selected from the same document.
+0	The output of our system, a ranked list of sentences relevant to the users question, can be subsequently used as input to an answer selection system in order to find specific answers from the extracted sentences.
+0	Alternatively, the sentences canbe returned to the user as a question-focused summary.
+0	This is similar to snippet retrieval (Wu etal., 2004).
+0	However, in our system answers are extracted from a set of multiple documents rather thanon a document-by-document basis.
+0	3.1 The LexRank method.
+0	In (Erkan and Radev, 2004), the concept of graph-based centrality was used to rank a set of sentences,in producing generic multi-document summaries.
+0	To apply LexRank, a similarity graph is producedfor the sentences in an input document set.
+0	In thegraph, each node represents a sentence.
+0	There areedges between nodes for which the cosine similarity between the respective pair of sentences exceedsa given threshold.
+0	The degree of a given node isan indication of how much information the respective sentence has in common with other sentences.
+0	Therefore, sentences that contain the most salient information in the document set should be very centralwithin the graph.Figure 2 shows an example of a similarity graph for a set of five input sentences, using a cosine similarity threshold of 0.15.
+0	Once the similarity graph isconstructed, the sentences are then ranked accordingto their eigenvector centrality.
+0	As previously mentioned, the original LexRank method performed wellin the context of generic summarization.
+0	Below,we describe a topic-sensitive version of LexRank,which is more appropriate for the question-focusedsentence retrieval problem.
+0	In the new approach, the 916 score of a sentence is determined by a mixture modelof the relevance of the sentence to the query and thesimilarity of the sentence to other high-scoring sentences.
+0	3.2 Relevance to the question.
+0	In topic-sensitive LexRank, we first stem all of thesentences in a set of articles and compute word IDFsby the following formula: idfw = log (N + 1 0.5 + sfw )(1) whereN is the total number of sentences in the cluster, and sfw is the number of sentences that the wordw appears in.
+0	We also stem the question and remove the stop words from it.
+0	Then the relevance of a sentence s tothe question q is computed by: rel(s|q) =Xw?q log(tfw,s + 1) log(tfw,q + 1)  idfw (2) where tfw,s and tfw,q are the number of times wappears in s and q, respectively.
+0	This model hasproven to be successful in query-based sentence retrieval (Allan et al., 2003), and is used as our competitive baseline in this study (e.g. Tables 4, 5 and7).
+0	3.3 The mixture model.
+0	The baseline system explained above does not makeuse of any inter-sentence information in a cluster.We hypothesize that a sentence that is similar tothe high scoring sentences in the cluster should alsohave a high score.
+0	For instance, if a sentence thatgets a high score in our baseline model is likely tocontain an answer to the question, then a related sentence, which may not be similar to the question itself, is also likely to contain an answer.This idea is captured by the following mixture model, where p(s|q), the score of a sentence s givena question q, is determined as the sum of its relevance to the question (using the same measure asthe baseline described above) and the similarity tothe other sentences in the document cluster: p(s|q) = d rel(s|q)Pz?C rel(z|q) +(1-d)Xv?C sim(s, v)Pz?C sim(z, v) p(v|q) (3) where C is the set of all sentences in the cluster.
+0	Thevalue of d, which we will also refer to as the question bias, is a trade-off between two terms in the Vertices: Sentence IndexSentence Index SalienceSalience SentenceSentence
+0	1 0.03614457831325301 At least two people are dead, inclu...
+0	0 0.28454242157110576 Officials said the plane was carryin...
+0	2 0.1973852892722677 Italian police said the plane was car..
+0	3 0.28454242157110576 Rescue officials said that at least th...
+0	Graph Figure 2: LexRank example: sentence similaritygraph with a cosine threshold of 0.15.
+0	equation and is determined empirically.
+0	For highervalues of d, we give more importance to the relevance to the question compared to the similarity tothe other sentences in the cluster.
+0	The denominatorsin both terms are for normalization, which are described below.
+0	We use the cosine measure weightedby word IDFs as the similarity between two sentences in a cluster: sim(x, y) = Pw?x,y tfw,xtfw,y(idfw) 2 qPxi?x(tfxi,xidfxi ) 2 qP yi?y(tfyi,y idfyi )2 (4) Equation 3 can be written in matrix notation asfollows: p = [dA+ (1- d)B]Tp (5) A is the square matrix such that for a given index i,all the elements in the ith column are proportionalto rel(i|q).
+0	B is also a square matrix such that eachentry B(i, j) is proportional to sim(i, j).
+0	Both matrices are normalized so that row sums add up to 1.Note that as a result of this normalization, all rowsof the resulting square matrixQ = [dA+(1-d)B]also add up to 1.
+0	Such a matrix is called stochasticand defines a Markov chain.
+0	If we view each sentence as a state in a Markov chain, thenQ(i, j) specifies the transition probability from state i to state jin the corresponding Markov chain.
+0	The vector pwe are looking for in Equation 5 is the stationarydistribution of the Markov chain.
+0	An intuitive interpretation of the stationary distribution can be under- 917 stood by the concept of a random walk on the graphrepresentation of the Markov chain.With probability d, a transition is made from the current node (sentence) to the nodes that are similar to the query.
+0	With probability (1-d), a transitionis made to the nodes that are lexically similar to thecurrent node.
+0	Every transition is weighted accordingto the similarity distributions.
+0	Each element of thevector p gives the asymptotic probability of endingup at the corresponding state in the long run regardless of the starting state.
+0	The stationary distributionof a Markov chain can be computed by a simple iterative algorithm, called power method.1 A simpler version of Equation 5, where A is auniform matrix andB is a normalized binary matrix,is known as PageRank (Brin and Page, 1998; Pageet al., 1998) and used to rank the web pages by theGoogle search engine.
+0	It was also the model used torank sentences in (Erkan and Radev, 2004).
+0	3.4 Experiments with topic-sensitive LexRank.
+0	We experimented with different values of d on ourtraining data.
+0	We also considered several thresholdvalues for inter-sentence cosine similarities, wherewe ignored the similarities between the sentencesthat are below the threshold.
+0	In the training phaseof the experiment, we evaluated all combinationsof LexRank with d in the range of [0, 1] (in increments of 0.10) and with a similarity threshold ranging from [0, 0.9] (in increments of 0.05).
+0	We thenfound all configurations that outperformed the baseline.
+0	These configurations were then applied to ourdevelopment/test set.
+0	Finally, our best sentence retrieval system was applied to our test data set andevaluated against the baseline.
+0	The remainder of thepaper will explain this process and the results in detail.
+0	4 Experimental setup.
+0	4.1 Corpus.
+0	We built a corpus of 20 multi-document clusters ofcomplex news stories, such as plane crashes, political controversies and natural disasters.
+0	The data 1The stationary distribution is unique and the power methodis guaranteed to converge provided that the Markov chain isergodic (Seneta, 1981).
+0	A non-ergodic Markov chain can bemade ergodic by reserving a small probability for jumping toany other state from the current state (Page et al., 1998).
+0	clusters and their characteristics are shown in Table 1.
+0	The news articles were collected from varioussources.
+0	Newstracker clusters were collected automatically by our Web-based news summarization system.
+0	The number of clusters randomly assignedto the training, development/test and test data setswere 11, 3 and 6, respectively.Next, we assigned each cluster of articles to an annotator, who was asked to read all articles in thecluster.
+0	He or she then generated a list of factualquestions key to understanding the story.
+0	Once wecollected the questions for each cluster, two judgesindependently annotated nine of the training clusters.
+0	For each sentence and question pair in a givencluster, the judges were asked to indicate whetheror not the sentence contained a complete answerto the question.
+0	Once an acceptable rate of inter-judge agreement was verified on the first nine clusters (Kappa (Carletta, 1996) of 0.68), the remaining11 clusters were annotated by one judge each.In some cases, the judges did not find any sentences containing the answer for a given question.Such questions were removed from the corpus.
+0	Thefinal number of questions annotated for answersover the entire corpus was 341, and the distributionsof questions per cluster can be found in Table 1.
+0	4.2 Evaluation metrics and methods.
+0	To evaluate our sentence retrieval mechanism, weproduced extract files, which contain a list of sentences deemed to be relevant to the question, for thesystem and from human judgment.
+0	To compare different configurations of our system to the baselinesystem, we produced extracts at a fixed length of 20sentences.
+0	While evaluations of question answeringsystems are often based on a shorter list of rankedsentences, we chose to generate longer lists for several reasons.
+0	One is that we are developing a PRsystem, of which the output can then be input to ananswer extraction system for further processing.
+0	Insuch a setting, we would most likely want to generate a relatively longer list of candidate sentences.
+0	Aspreviously mentioned, in our corpus the questionsoften have more than one relevant answer, so ideally,our PR system would find many of the relevant sentences, sending them on to the answer componentto decide which answer(s) should be returned to theuser.
+0	Each systems extract file lists the document 918 Cluster Sources Articles Questions Data set Sample question Algerian terror AFP, UPI 2 12 train What is the condition under whichthreat GIA will take its action?Milan plane MSNBC, CNN, ABC, 9 15 train How many people were in thecrash Fox, USAToday building at the time of the crash?Turkish plane BBC, ABC, 10 12 train To where was the plane headed?crash FoxNews, YahooMoscow terror UPI, AFP, AP 7 7 train How many people were killed inattack the most recent explosion?Rhode Island MSNBC, CNN, ABC, Lycos, 10 8 train Who was to blame forclub fire Fox, BBC, Ananova the fire?FBI most AFP, UPI 3 14 train How much is the State Department offeringwanted for information leading to bin Ladens arrest?Russia bombing AP, AFP 2 11 train What was the cause of the blast?Bali terror CNN, FoxNews, ABC, 10 30 train What were the motivationsattack BBC, Ananova of the attackers?Washington DC FoxNews, Haaretz, BBC, 8 28 train What kinds of equipment or weaponssniper BBC, Washington Times, CBS were used in the killings?GSPC terror Newstracker 8 29 train What are the charges againstgroup the GSPC suspects?China Novelty 43 25 18 train What was the magnitude of theearthquake earthquake in Zhangjiakou?Gulfair ABC, BBC, CNN, USAToday, 11 29 dev/test How many people FoxNews, Washington Post were on board?David Beckham AFP 20 28 dev/test How long had Beckham been playing fortrade MU before he moved to RM?Miami airport Newstracker 12 15 dev/test How many concourses doesevacuation the airport have?US hurricane DUC d04a 14 14 test In which places had the hurricane landed?EgyptAir crash Novelty 4 25 29 test How many people were killed?Kursk submarine Novelty 33 25 30 test When did the Kursk sink?Hebrew University bombing Newstracker 11 27 test How many people were injured?Finland mall bombing Newstracker 9 15 test How many people were in the mall at the time of the bombing?Putin visits Newstracker 12 20 test What issue concerned BritishEngland human rights groups?
+0	Table 1: Corpus of complex news stories.
+0	and sentence numbers of the top 20 sentences.
+0	Thegold standard extracts list the sentences judged ascontaining answers to a given question by the annotators (and therefore have variable sizes) in no particular order.2 We evaluated the performance of the systems using two metrics - Mean Reciprocal Rank (MRR)(Voorhees and Tice, 2000) and Total ReciprocalDocument Rank (TRDR) (Radev et al., 2005).MRR, used in the TREC Q&A evaluations, is thereciprocal rank of the first correct answer (or sentence, in our case) to a given question.
+0	This measuregives us an idea of how far down we must look in theranked list in order to find a correct answer.
+0	To contrast, TRDR is the total of the reciprocal ranks of allanswers found by the system.
+0	In the context of answering questions from complex stories, where thereis often more than one correct answer to a question,and where answers are typically time-dependent, weshould focus on maximizing TRDR, which gives us 2For clusters annotated by two judges, all sentences chosenby at least one judge were included.
+0	a measure of how many of the relevant sentenceswere identified by the system.
+0	However, we reportboth the average MRR and TRDR over all questionsin a given data set.
+0	In the training phase, we searched the parameterspace for the values of d (the question bias) and thesimilarity threshold in order to optimize the resultingTRDR scores.
+0	For our problem, we expected that arelatively low similarity threshold pair with a highquestion bias would achieve the best results.
+0	Table 2shows the effect of varying the similarity threshold.3 The notation LR[a, d] is used, where a is the similarity threshold and d is the question bias.
+0	The optimal range for the parameter a was between 0.14 and0.20.
+0	This is intuitive because if the threshold is toohigh, such that only the most lexically similar sentences are represented in the graph, the method doesnot find sentences that are related but are more lex3A threshold of -1 means that no threshold was used suchthat all sentences were included in the graph.
+0	919 System Ave. MRR Ave. TRDR LR[-1.0,0.65] 0.5270 0.8117LR[0.02,0.65] 0.5261 0.7950LR[0.16,0.65] 0.5131 0.8134LR[0.18,0.65] 0.5062 0.8020LR[0.20,0.65] 0.5091 0.7944LR[-1.0,0.80] 0.5288 0.8152LR[0.02,0.80] 0.5324 0.8043LR[0.16,0.80] 0.5184 0.8160LR[0.18,0.80] 0.5199 0.8154LR[0.20,0.80] 0.5282 0.8152 Table 2: Training phase: effect of similarity threshold (a) on Ave. MRR and TRDR.
+0	System Ave. MRR Ave. TRDR LR[0.02,0.65] 0.5261 0.7950LR[0.02,0.70] 0.5290 0.7997LR[0.02,0.75] 0.5299 0.8013LR[0.02,0.80] 0.5324 0.8043LR[0.02,0.85] 0.5322 0.8038LR[0.02,0.90] 0.5323 0.8077LR[0.20,0.65] 0.5091 0.7944LR[0.20,0.70] 0.5244 0.8105LR[0.20,0.75] 0.5285 0.8137LR[0.20,0.80] 0.5282 0.8152LR[0.20,0.85] 0.5317 0.8203LR[0.20,0.90] 0.5368 0.8265 Table 3: Training phase: effect of question bias (d)on Ave. MRR and TRDR.
+0	ically diverse (e.g. paraphrases).
+0	Table 3 shows theeffect of varying the question bias at two differentsimilarity thresholds (0.02 and 0.20).
+0	It is clear that ahigh question bias is needed.
+0	However, a small probability for jumping to a node that is lexically similar to the given sentence (rather than the questionitself) is needed.
+0	Table 4 shows the configurationsof LexRank that performed better than the baselinesystem on the training data, based on mean TRDRscores over the 184 training questions.
+0	We appliedall four of these configurations to our unseen development/test data, in order to see if we could furtherdifferentiate their performances.
+0	5.1 Development/testing phase.
+0	The scores for the four LexRank systems and thebaseline on the development/test data are shown in System Ave. MRR Ave. TRDR Baseline 0.5518 0.8297 LR[0.14,0.95] 0.5267 0.8305LR[0.18,0.90] 0.5376 0.8382LR[0.18,0.95] 0.5421 0.8382LR[0.20,0.95] 0.5404 0.8311 Table 4: Training phase: systems outperforming thebaseline in terms of TRDR score.
+0	System Ave. MRR Ave. TRDR Baseline 0.5709 1.0002 LR[0.14,0.95] 0.5882 1.0469LR[0.18,0.90] 0.5820 1.0288LR[0.18,0.95] 0.5956 1.0411LR[0.20,0.95] 0.6068 1.0601 Table 5: Development testing evaluation.
+0	Cluster B-MRR LRMRR B-TRDR LRTRDR Gulfair 0.5446 0.5461 0.9116 0.9797David Beckham trade 0.5074 0.5919 0.7088 0.7991Miami airport 0.7401 0.7517 1.7157 1.7028evacuation Table 6: Average scores by cluster: baseline versusLR[0.20,0.95].
+0	Table 5.
+0	This time, all four LexRank systems outperformed the baseline, both in terms of average MRRand TRDR scores.
+0	An analysis of the average scoresover the 72 questions within each of the three clusters for the best system, LR[0.20,0.95], is shownin Table 6.
+0	While LexRank outperforms the baseline system on the first two clusters both in termsof MRR and TRDR, their performances are not substantially different on the third cluster.
+0	Therefore,we examined properties of the questions within eachcluster in order to see what effect they might have onsystem performance.We hypothesized that the baseline system, which compares the similarity of each sentence to the question using IDF-weighted word overlap, should perform well on questions that provide many contentwords.
+0	To contrast, LexRank might perform better when the question provides fewer content words,since it considers both similarity to the query andinter-sentence similarity.
+0	Out of the 72 questions inthe development/test set, the baseline system outperformed LexRank on 22 of the questions.
+0	In fact, theaverage number of content words among these 22questions was slightly, but not significantly, higherthan the average on the remaining questions (3.63words per question versus 3.46).
+0	Given this observation, we experimented with two mixed strategies,in which the number of content words in a questiondetermined whether LexRank or the baseline systemwas used for sentence retrieval.
+0	We tried thresholdvalues of 4 and 6 content words, however, this didnot improve the performance over the pure strategyof system LR[0.20,0.95].
+0	Therefore, we applied this 920 Ave. MRR Ave. TRDR Baseline 0.5780 0.8673 LR[0.20,0.95] 0.6189 0.9906p-value na 0.0619 Table 7: Testing phase: baseline vs. LR[0.20,0.95].
+0	system versus the baseline to our unseen test set of134 questions.
+0	5.2 Testing phase.
+0	As shown in Table 7, LR[0.20,0.95] outperformedthe baseline system on the test data both in termsof average MRR and TRDR scores.
+0	The improvement in average TRDR score was statistically significant with a p-value of 0.0619.
+0	Since we are interested in a passage retrieval mechanism that findssentences relevant to a given question, providing input to the question answering component of our system, the improvement in average TRDR score isvery promising.
+0	While we saw in Section 5.1 thatLR[0.20,0.95] may perform better on some questionor cluster types than others, we conclude that it beatsthe competitive baseline when one is looking to optimize mean TRDR scores over a large set of questions.
+0	However, in future work, we will continueto improve the performance, perhaps by developing mixed strategies using different configurationsof LexRank.
+0	The idea behind using LexRank for sentence retrieval is that a system that considers only the similarity between candidate sentences and the inputquery, and not the similarity between the candidatesentences themselves, is likely to miss some important sentences.
+0	When using any metric to comparesentences and a query, there is always likely to bea tie between multiple sentences (or, similarly, theremay be cases where fewer than the number of desired sentences have similarity scores above zero).LexRank effectively provides a means to break suchties.
+0	An example of such a scenario is illustrated inTables 8 and 9, which show the top ranked sentencesby the baseline and LexRank, respectively for thequestion What caused the Kursk to sink? from theKursk submarine cluster.
+0	It can be seen that all topfive sentences chosen by the baseline system have Rank Sentence Score Relevant?
+0	1 The Russian governmental commission on the 4.2282 Naccident of the submarine Kursk sinking inthe Barents Sea on August 12 has rejected11 original explanations for the disaster,but still cannot conclude what caused the.
+0	tragedy indeed, Russian Deputy Premier IlyaKlebanov said here Friday.
+0	2 There has been no final word on what caused 4.2282 Nthe submarine to sink while participatingin a major naval exercise, but DefenseMinister Igor Sergeyev said the theory.
+0	that Kursk may have collided with anotherobject is receiving increasingly concrete confirmation.3 Russian Deputy Prime Minister Ilya Klebanov 4.2282 Y said Thursday that collision with a bigobject caused the Kursk nuclear submarineto sink to the bottom of the Barents Sea.
+0	4 Russian Deputy Prime Minister Ilya Klebanov 4.2282 Ysaid Thursday that collision with a big.
+0	object caused the Kursk nuclear submarineto sink to the bottom of the Barents Sea.
+0	5 President Clintons national security adviser, 4.2282 NSamuel Berger, has provided his Russian.
+0	counterpart with a written summary of whatU.S. naval and intelligence officials believe caused the nuclear-powered submarine Kursk tosink last month in the Barents Sea, officials said Wednesday.
+0	Table 8: Top ranked sentences using baseline systemon the question What caused the Kursk to sink?.
+0	the same sentence score (similarity to the query), yetthe top ranking two sentences are not actually relevant according to the judges.
+0	To contrast, LexRankachieved a better ranking of the sentences since it isbetter able to differentiate between them.
+0	It shouldbe noted that both for the LexRank and baseline systems, chronological ordering of the documents andsentences is preserved, such that in cases where twosentences have the same score, the one publishedearlier is ranked higher.
+0	We presented topic-sensitive LexRank and appliedit to the problem of sentence retrieval.
+0	In a Web-based news summarization setting, users of our system could choose to see the retrieved sentences (asin Table 9) as a question-focused summary.
+0	As indicated in Table 9, each of the top three sentenceswere judged by our annotators as providing a complete answer to the respective question.
+0	While thefirst two sentences provide the same answer (a collision caused the Kursk to sink), the third sentenceprovides a different answer (an explosion caused thedisaster).
+0	While the last two sentences do not provide answers according to our judges, they do provide context information about the situation.
+0	Alternatively, the user might prefer to see the extracted 921 Rank Sentence Score Relevant?
+0	1 Russian Deputy Prime Minister Ilya Klebanov 0.0133 Ysaid Thursday that collision with a big.
+0	object caused the Kursk nuclear submarineto sink to the bottom of the Barents Sea.
+0	2 Russian Deputy Prime Minister Ilya Klebanov 0.0133 Ysaid Thursday that collision with a big.
+0	object caused the Kursk nuclear submarineto sink to the bottom of the Barents Sea.
+0	3 The Russian navy refused to confirm this, 0.0125 Ybut officers have said an explosion in thetorpedo compartment at the front of the.
+0	submarine apparently caused the Kursk to sink.4 President Clintons national security adviser, 0.0124 N Samuel Berger, has provided his Russiancounterpart with a written summary of whatU.S. naval and intelligence officials believe caused the nuclear-powered submarine Kursk tosink last month in the Barents Sea, officials said Wednesday.5 There has been no final word on what caused 0.0123 N the submarine to sink while participatingin a major naval exercise, but DefenseMinister Igor Sergeyev said the theory that Kursk may have collided with anotherobject is receiving increasingly concrete confirmation.
+0	Table 9: Top ranked sentences using theLR[0.20,0.95] system on the question What causedthe Kursk to sink? answers from the retrieved sentences.
+0	In this case,the sentences selected by our system would be sentto an answer identification component for furtherprocessing.
+0	As discussed in Section 2, our goal wasto develop a topic-sensitive version of LexRank andto use it to improve a baseline system, which hadpreviously been used successfully for query-basedsentence retrieval (Allan et al., 2003).
+0	In terms ofthis task, we have shown that over a large set of unaltered questions written by our annotators, LexRankcan, on average, outperform the baseline system,particularly in terms of TRDR scores.
+0	We would like to thank the members of the CLAIRgroup at Michigan and in particular Siwei Shen andYang Ye for their assistance with this project.

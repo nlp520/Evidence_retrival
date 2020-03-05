@@ -1,0 +1,165 @@
+0	Wide-Coverage Semantic Analysis with Boxer
+0	Boxer is an open-domain software component for semantic analysis of text, based on Combinatory Categorial Grammar (CCG) and Discourse Representation Theory (DRT).
+0	Used together with the C&C tools, Boxer reaches more than 95% coverage on newswire texts.
+0	The semantic representations produced by Boxer, known as Discourse Representation Structures (DRSs), incorporate a neoDavidsonian representations for events, using the VerbNet inventory of thematic roles.
+0	The resulting DRSs can be translated to ordinary first-order logic formulas and be processing by standard theorem provers for first-order logic.
+0	Boxer’s performance on the shared task for comparing semantic represtations was promising.
+0	It was able to produce complete DRSs for all seven texts.
+0	Manually inspecting the output revealed that: (a) the computed predicate argument structure was generally of high quality, in particular dealing with hard constructions involving control or coordination; (b) discourse structure triggered by conditionals, negation or discourse adverbs was overall correctly computed; (c) some measure and time expressions are correctly analysed, others aren’t; (d) several shallow analyses are given for lexical phrases that require deep analysis; (e) bridging references and pronouns are not resolved in most cases.
+0	Boxer is distributed with the C&C tools and freely available for research purposes.
+0	277
+0	Boxer is an open-domain tool for computing and reasoning with semantic representations.
+0	Based on Discourse Representation Theory (Kamp and Reyle, 1993), Boxer is able to construct Discourse Representation Structures (DRSs for short, informally called “boxes” because of the way they are graphically displayed) for English sentences and texts.
+0	There is a translation from DRSs to first-order formulas, which opens the way to perform inference by including automated reasoning tools such as theorem provers and model builders (Blackburn and Bos, 2005).
+0	2.1 Combinatory Categorial Grammar.
+0	As a preliminary to semantics, we need syntax.
+0	Boxer implements a syntax-semantics interface based on Combinatory Categorial Grammar, CCG (Steedman, 2001).
+0	CCG lends itself extremely well for this task because it is lexically driven and has only few “grammar” rules, and not less because of its type-transparency principle, which says that each syntactic type (a CCG category) corresponds to a unique semantic type (a lambda-expression).
+1	Because the syntax-semantics is clearly defined, the choice of logical form can be independent of the categorial framework underlying it.
+0	Steedman uses simple predicate argument structures expressed via the untyped lambda calculus to illustrate the construction of logical forms in CCG (Steedman, 2001).
+0	We instead opt for Discourse Representation Theory, a widely accepted sophisticated formal theory of natural language meaning dealing with a large variety of semantic phenomena.
+0	2.2 Discourse Representation Theory.
+0	DRT is a formal semantic theory originally designed by Kamp to cope with anaphoric pronouns and temporal relations (Kamp, 1981).
+0	DRT uses an explicit intermediate semantic representation, called DRS (Discourse Representation Structure), for dealing with anaphoric or other contextually sensitive linguistic phenomena such as ellipsis and presupposition.
+0	We choose DRT because it has established itself as a well- documented formal theory of meaning, covering a number of semantic phenomena ranging from pronouns, abstract anaphora, presupposition, tense and aspect, propositional attitudes, to plurals (Kamp and Reyle, 1993; Asher, 1993; Van der Sandt, 1992).In terms of expressive power, three different kinds of representations are distin guished in Boxer: 1.
+0	Discourse Representation Structures (DRSs).
+0	2.
+0	Underspecified DRSs (DRSs + merge + alfa).
+0	3.
+0	λ-DRSs (UDRSs + lambda + application) DRSs are the representations corresponding to natural language sentences or texts.
+0	This is the core DRT language compatible with first-order logic.
+0	The DRS language employed by Boxer is a subset of the one found in Kamp and Reyle (1993).
+0	We define the syntax of DRSs below with the help of BackusNaur form, where non-terminal symbols are enclosed in angle brackets.
+0	The non-terminal <ref> denotes a discourse referent, and <symn> an n-place predicate symbol.
+0	<expe > ::= <ref> <expt > ::= <drs> <ref>∗ <drs> ::= <condition>∗ <condition> ::= <basic> | <complex> <basic> ::= <sym1 >(<expe >) | <sym2 >(<expe >,<expe >) | <named>(<expe >,<nam>,<sort>) <complex> ::= <expt > | <expt >⇒<expt > | <expt >∨<expt > | <ref>:<expt > DRSs are structures comprising two parts: 1) a set of discourse referents; and 2) a set of conditions constraining the interpretation of the discourse referents.
+0	Conditions can be simple properties of discourse referents, express relations between them, or be complex, introducing (recursively) subordinated DRSs.
+0	The standard version of DRT formulated in Kamp & Reyle incorporates a Davidsonian event semantics (Kamp and Reyle, 1993), where discourse referents can also stand for events and be referred to by anaphoric expressions or constrained by temporal relations.
+0	The neoDavidsonian system, as implemented in Boxer, uses the inventory of roles proposed by VerbNet (Kipper et al., 2008), and has some attractive formal properties (Dowty, 1989).
+0	There is only one way to state that an individual is participating in an event—namely by relating it to the event using a binary relation expressing some thematic role.
+0	Furthermore, the approach clearly distinguishes the participants of an event by the semantic roles they bear.
+0	Finally, it also allows us to characterize the meaning of thematic roles independently of the meaning of the verb that describes the event.
+0	We won’t show the standard translation from DRS to FOL here (Blackburn et al., 2001; Bos, 2004; Kamp and Reyle, 1993).
+0	Intuitively, translating DRSs into first-order formulas proceeds as follows: each discourse referent is translated as a first-order quantifier, and all DRS-conditions are translated into a conjunctive formula of FOL.
+0	Discourse referents usually are translated to existential quantifiers, with the exception of those declared in antecedents of implicational DRS-conditions, that are translated as universal quantifiers.
+0	Obviously, negated DRSs are translated as negated formulas, disjunctive DRSs as disjunctive formulas, and implicational DRSs as formulas with material implication.
+0	Boxer outputs either resolved semantic representations (in other words, completely disambiguated DRSs), or underspecified representations, where some ambiguities are left unresolved in the semantic representation.
+0	This level of representation is referred to as underspecified DRS, or UDRS for short.
+0	It is a small extension of the DRS language given in the previous section and is defined as follows: <expt > ::= <udrs> <udrs> ::= <drs> | (<expt >;<expt >) | (<expt >α<expt >) Note here that expressions of type t are redefined as UDRSs.
+0	UDRSs are either ordinarly DRSs, DRSs conjoined by the merge (for which we use the semicolon), or NP/N: A N/N: record N: date λq.λp.( x ;q@x;p@x) λp.λx.( y record(y) nn(y,x) ;p@x) λx. date(x) [fa] N: record date y λx.( record(y) nn(y,x) ; ) date(x) . . .
+0	[merge] y λx. record(y) nn(y,x) date(x) [fa] NP: A record date y λp.( x ; record(y) nn(y,x) date(x) ;p@x) . . .
+0	[merge] x y λp. record(y) nn(y,x) date(x) ;p@x Figure 1: Derivation with λ-DRSs, including β-conversion, for “A record date”.
+0	Combinatory rules are indicated by solid lines, semantic rules by dotted lines.
+0	DRS composed by the α-operator.
+0	The merge conjoins two DRSs into a larger DRS — semantically the merge is interpretated as (dynamic) logical conjunction.
+0	Merge- reduction is the process of eliminating the merge operation by forming a new DRS resulting from the union of the domains and conditions of the argument DRSso of a merge, respectively (obeying certain constraints).
+0	Figure 1 illustrates the syntax- semantics interface (and merge-reduction) for a derivation of a simple noun phrase.
+0	Boxer adopts Van der Sandt’s view as presupposition as anaphora (Van der Sandt, 1992), in which presuppositional expressions are either resolved to previously established discourse entities or accommodated on a suitable level of discourse.
+0	Van der Sandt’s proposal is cast in DRT, and therefore relatively easy to integrate in Boxer’s semantic formalism.
+0	The α-operator indicates information that has to be resolved in the context, and is lexically introduced by anaphoric or presuppositional expressions.
+0	A DRS constructed with α resembles the protoDRS of Van der Sandt’s theory of presupposition (Van der Sandt, 1992) although they are syntactically defined in a slightly different way to overcome problems with free and bound variables, following Bos (2003).
+0	Note that the difference between anaphora and presupposition collapses in Van der Sandt’s theory.
+0	The types are the ingredients of a typed lambda calculus that is employed to construct DRSs in a bottom-up fashion, compositional way.
+0	The language of lambda DRSs is an extension of the language of (U)DRS defined before: <expe > ::= <ref> | <vare > <expt > ::= <udrs> | <vart > <expα > ::= (<exp(β,α)> @ <varβ >) | <varα > <exp(α,β)> ::= λ<varα >.<expβ > | <var(α,β)> Hence we define discourse referents as expressions of type e, and DRSs as expressions of type t . We use @ to indicate function application, and the λ-operator to bind free variables over which we wish to abstract.
+0	3.1 Preprocessing.
+0	The input text needs to be tokenised with one sentence per line.
+0	In the context of this paper, Boxer was put into action after using a combined processing pipeline of the C&C tools consisting of POS-tagging, named entity recognition, and parsing (Curran et al., 2007).
+0	The POS tags are used to specify the lexical semantics for ambiguous CCG categories (see below); the named entity tags are transferred to the level of DRSs as well and added as sorts to named discourse referents.
+0	An example of a CCG derivation is shown in Figure 2.
+0	a virus --[lex] --[lex] by np:nb/n n ---------------------[lex] -----------[fa] Cervical cancer caused ((s:pss\np)\(s:pss\np))/np np:nb ---[lex] --[lex] ---[lex] --------------------------------------[fa] n/n n is s:pss\np (s:pss\np)\(s:pss\np) ------------[fa] ----------------[lex] -----------------------------------------------[ba] n (s:dcl\np)/(s:pss\np) s:pss\np ------------[tc] ---------------------------------------------------------------------[fa] np s:dcl\np --------------------------------------------------------------------------------------[ba] s:dcl Figure 2: CCG derivation as generated by the C&C tools 3.2 Lexicon.
+0	In CCG, the syntactic lexicon comprises the set of lexical categories.
+0	CCGbank hosts more than a thousand different categories.
+0	The semantic lexicon defines a suitable mapping from categories to semantic representations.
+0	In the context of Boxer, these semantic representations are defined in the shape of lambda-DRSs.
+0	Boxer implements almost all categories employed by the C&C parser, which is a subset of the ones found in CCGbank, leaving out extremely rare cases for the sake of efficiency.
+0	Defining the lexical semantics cannot always be done solely on the basis of the category, for one lexical category could give rise to several different semantic interpretations.
+0	So we need to take other resources into account, such as the assigned part of speech (PoS), and sometimes the wordform or named entity type associated with the category.
+0	For the majority of categories, in particular those that correspond to open-class lexical items, we also need access to the morphological root of the word that triggered the lexical category.
+0	Although there is a one-to-one mapping between the CCG categories and semantic types — and this must be the case to ensure the semantic composition process proceeds without type clashes — the actual instantiations of a semantic type can differ even within the scope of a single CCG category.
+0	For example, the category n/n can correspond to an adjective, a cardinal expression, or even common nouns and proper names (in the compound expressions).
+0	In the latter two cases the lexical entry introduces a new discourse referent, in the former two it does not.
+0	To account for this difference we also need to look at the part of speech that is assigned to a token.
+0	3.3 Resolution.
+0	Boxer implements various presupposition triggers introduced by noun phrases, including personal pronouns, possessive pronouns, reflexive pronouns, emphasising pronouns, demonstrative pronouns, proper names, other-anaphora, definite descriptions.
+0	In addition, some aspects of tense are implemented as presupposition triggers, too.
+0	Anaphora and presupposition resolution takes place in a separate stage after building up the representation, following the resolution algorithm outlined in Bos (2003).
+0	The current implementation of Boxer aims at high precision in resolution: personal pronouns are only attempted to be resolved to named entities, definite descriptions and proper names are only linked to previous discourse referents if there is overlap in the DRS-conditions of the antencedent DRS and alpha-DRS.
+0	If no suitable antecedent can be found, global accommodation of the anaphoric discourse referent and conditions will take palce.
+0	Because Boxer has the option to output unresolved DRSs too, it is possible to include external anaphora or coreference resolution components.
+0	3.4 Example Analysis.
+0	We illustrate the capabilities of Boxer with the following example text shown below (aka as Text 2 of the shared task).1 The text consists of three sentences, the second being a coordinated sentence.
+0	It contains a passive construction, three pronouns, relative clauses, control verbs, and a presupposition trigger other.
+0	Text 2 Cervical cancer is caused by a virus.
+0	That has been known for some time and it has led to a vaccine that seems to prevent it.
+0	Researchers have been looking for other cancers that may be caused by viruses.
+0	The output of Boxer for this text is shown in Figure 3.
+0	Only the box format is shown here — Boxer is also able to output the DRSs in Prolog or XML encodings.
+0	It was run without analysing tense and aspect and without discourse segmentation (both of these are possible in Boxer, but still undergo development, and are therefore disregarded here).
+0	As we can see from the example and Boxer’s analysis various things go right and various things go wrong.
+0	Boxer deals fine with the passive construction (assigned the 1 This text was taken from the Economist Volume 387 Number 8582, page 92.
+0	The third sentence has been simplified.
+0	appropriate semantic role), the relative clauses, and the control construction (vaccine is the agent of the prevent event).
+0	It also handles the presupposition trigger anaphorically linking the mention of other cancers in the third sentence with the phrase cervical cancer in the first sentence, and asserting an inequality condition in the DRS.
+0	Boxer failed to resolve three pronouns correctly.
+0	These are all accommodated at the global level of DRS, which is the DRS on the left-hand side in Figure 3.
+0	All of the pronouns have textual antecedents: the abstract pronoun that in the second sentence refers to the fact declared in the first sentence.
+0	The first occurrence of it in the second sentence also seems to refer to this fact — the second occurrence of it refers to cervical cancer mentioned in the first sentence.
+0	bin/boxer --input working/step/text2.ccg --semantics drs --box --resolve --roles verbnet --format no %%% %%% | x0 x1 x2 | | x3 x4 x5 | | x6 x7 | | x8 x9 x10 x11 | | x13 x14 x15 x16 x17 | %%% |------------| |--------------| |--------------| |------------------------| |---------------------| %%% (| thing(x0) |+(| cancer(x3) |+(| know(x6) |+(| lead(x8) |+| researcher(x13) |)))) %%% | neuter(x1) | | cervical(x3) | | time(x7) | | vaccine(x9) | | look(x14) | %%% | neuter(x2) | | cause(x4) | | event(x6) | | seem(x10) | | agent(x14,x13) | %%% | | | virus(x5) | | theme(x6,x0) | | proposition(x11) | | cancer(x15) | %%% | event(x4) | | for(x6,x7) | | event(x10) | | | %%% | theme(x4,x3) | | | | event(x8) | | | | | %%% | by(x4,x5) | | agent(x8,x1) | | |----------| | %%% | | | agent(x10,x9) | | | | x15 = x3 | | %%% | theme(x10,x11) | | | | | %%% | to(x8,x9) | | cause(x16) | %%% | | | virus(x17) | %%% | | x12 | | | event(x16) | %%% | x11:|---------------| | | theme(x16,x15) | %%% | | prevent(x12) | | | by(x16,x17) | %%% | | event(x12) | | | for(x14,x15) | %%% | | agent(x12,x9) | | | event(x14) | %%% | | theme(x12,x2) | | | | %%% | | | | %%% | | Attempted: 3.
+0	Completed: 3 (100.00%).
+0	Figure 3: Boxer output for Shared Task Text 2
+0	Here we discuss the output of Boxer on the Shared Task Texts (Bos, 2008).
+0	Boxer was able to produce semantic representation for all text without any further modifications to the software.
+0	For each text we briefly say what was good and bad about Boxer’s analysis.
+0	(We won’t comment on the performance on the second text, as this is the text proposed by ourselves and already discussed in the previous section.)
+0	Text 1: An object is thrown with a horizontal speed ...
+0	Good: The resulting predicate argument structure was fine overall, including a difficult control construction (“how long does it take the object to fall ...”).
+0	The definite description “the object” was correctly resolved.
+0	The conditional got correctly anal- ysed.
+0	Bad: The measure phrase “125 m high” got misinterpreted as noun-noun comn- pound.
+0	The definite description “the fall” was not linked to the falling event mentioned before.
+0	Comments: Because there were two questions in this text we parsed it using the C&C parser with the model trained on questions.
+0	Text 3: John went into a restaurant ...
+0	Good: The pronouns were correctly resolved to the proper name “John” rather than “the waiter”, even though this is based on the simple strategy in Boxer to link third- person pronouns to named entities of type human.
+0	The coordination construction “warm and friendly” got correctly analysed (distributively), and the control construction “began to read his book” received a proper predicate argument structure.
+0	Bad: Boxer doesn’t deal with bridging references introduced by relational nouns, so expressions like “the corner” were not linked to other discourse entities.
+0	Text 4: The first school for the training of leader dogs ...
+0	Good: The named entities were correctly recognised and classified (locations and proper names).
+0	The VP coordination in the first and later sentences was correctly analysed.
+0	The expression “this school” got correctly linked to the schhol mentioned earlier in the text.
+0	The time expression “1999” got the right interpretation.
+0	Bad: The adjectives/determiners “first” and “several” didn’t receive a deep analysis.
+0	The complex NP “Joao Pedro Fonseca and Marta Gomes” was distributively interpreted, rather than collective.
+0	The pronoun “they” wasn’t resolved.
+0	The preposition “In” starting the second sentence was incorrectly analysed by the parser.
+0	Text 5: As the 3 guns of Turret 2 were being loaded ...
+0	Good: The discourse structures invoked by the sentence initial adverbs “As” and “When” was correctly computed.
+0	Predicate argument structure overall good, including treatment of the relative clauses.
+0	The expression “the propellant” was correctly resolved.
+0	Time expressions in the one but last sentence got a correct analysis.
+0	Bad: The name “Turret 2” was incorrectly analysed (not as a compound).
+0	The adverbs “yet” and “then” got a shallow analysis.
+0	The first-person pronoun “I” was not resolved to the crewman.
+0	Comments: The quotes were removed in the tokenisation phase, because the C&C parser, being trained on a corpus without quotes, performs badly on texts containing quotes.
+0	Text 6: Amid the tightly packed row houses of North Philadelphia ...
+0	Good: The named entities were correctly recognised and classified as locations.
+0	The various cases of VP coordination all got properly analysed.
+0	The numerical and date expressions got correct representations.
+0	Bad: The occurrences of the third-person neuter pronouns were not resolved.
+0	The preposition “Amid” was not correctly analysed.
+0	Text 7: Modern development of wind-energy technology and applications ...
+0	Good: Correct interpretation of time expressions “1930s” and “1970s”.
+0	Correct pred icate argument structure overall.
+0	Bad: “Modern” was recognised as a proper name.
+0	The noun phrase “wind-energy technology and applications” was distributively analysed with “wind-energy” only applying to “technology”.
+0	The sentence-initial adverb “Since” did not introduce proper discourse structure.
+0	The units of measurement in the last two sentences were not recognised as such.
+0	The tricky time expression “mid-80’s” only got a shallow interpretation.
+0	Boxer is a wide-coverage system for semantic interpretation.
+0	It takes as input a CCG derivation of a natural language expression, and produces formally interpretable semantic representations: either in the form of DRSs, or as formulas of first-order logic.
+0	The existence of CCGbank (Hockenmaier, 2003) and robust parsers trained on it (Clark and Curran, 2004; Bos et al., 2004) make Boxer a state-of-the-art open- domain tool for deep semantic analysis.
+0	Boxer’s performance on the shared task for comparing semantic represtations was promising.
+0	It was able to produce DRSs for all texts.
+0	We can’t quantify the quality of Boxer’s output, as we don’t have gold standard representations at our disposal.
+0	Manually inspecting the output gives us the following impression: • computed predicate argument structure is generally of good quality, including hard constructions involving control or coordination; • discourse structure triggered by conditionals, negation or discourse adverbs is overall correctly computed; • some measure and time expressions are correctly analysed, others aren’t; • several shallow analyses are given for lexical phrases that require deep analysis; • bridging references and pronouns are not resolved in most cases; but when they are, they are mostly correctly resolved (high precision at the cost of recall).
+0	Finally, a comment on availability of Boxer.
+0	All sources of Boxer are available for download and free of noncommercial use.
+0	It is distributed with the C&C tools for natural language processing (Curran et al., 2007), which are hosted on this site: http://svn.ask.it.usyd.edu.au/trac/candc/wiki/boxer

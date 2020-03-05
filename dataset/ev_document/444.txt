@@ -1,0 +1,226 @@
+1	We supplement WordNet entries with information on the subjectivity of its word senses.
+0	Supervised classifiers that operate on word sense definitions in the same way that text classifiers operate on web or newspaper texts need large amounts of training data.
+0	The resulting data sparseness problem is aggravated by the fact that dictionary definitions are very short.
+0	We propose a semi-supervised minimum cut framework that makes use of both WordNet definitions and its relation structure.
+0	The experimental results show that it outperforms supervised minimum cut as well as standard supervised, non-graph classification, reducing the error rate by 40%.
+0	In addition, the semi-supervised approach achieves the same results as the supervised framework with less than 20% of the training data.
+0	There is considerable academic and commercial interest in processing subjective content in text, where subjective content refers to any expression of a private state such as an opinion or belief (Wiebe et al., 2005).
+0	Important strands of work include the identification of subjective content and the determination of its polarity, i.e. whether a favourable or unfavourable opinion is expressed.
+0	Automatic identification of subjective content often relies on word indicators, such as unigrams (Pang et al., 2002) or predetermined sentiment lexica (Wilson et al., 2005).
+0	Thus, the word positive the sentence contains a favourable opinion.
+0	However, such word-based indicators can be misleading for two reasons.
+0	First, contextual indicators such as irony and negation can reverse subjectivity or polarity indications (Polanyi and Zaenen, 2004).
+0	Second, different word senses of a single word can actually be of different subjectivity or polarity.
+0	A typical subjectivity-ambiguous word, i.e. a word that has at least one subjective and at least one objective sense, is positive, as shown by the two example senses given below.1 (1) positive, electropositive—having a positive electric charge;“protons are positive” (objective) (2) plus, positive—involving advantage or good; “a plus (or positive) factor” (subjective) We concentrate on this latter problem by automatically creating lists of subjective senses, instead of subjective words, via adding subjectivity labels for senses to electronic lexica, using the example of WordNet.
+0	This is important as the problem of subjectivity-ambiguity is frequent: We (Su and Markert, 2008) find that over 30% of words in our dataset are subjectivity-ambiguous.
+0	Information on subjectivity of senses can also improve other tasks such as word sense disambiguation (Wiebe and Mihalcea, 2006).
+0	Moreover, Andreevskaia and Bergler (2006) show that the performance of automatic annotation of subjectivity at the word level can be hurt by the presence of subjectivity-ambiguous words in the training sets they use.
+0	in the sentence “This deal is a positive development for our company.” gives a strong indication that 1 All examples in this paper are from WordNet 2.0..
+0	1 Human Language Technologies: The 2009 Annual Conference of the North American Chapter of the ACL, pages 1–9, Boulder, Colorado, June 2009.
+0	Qc 2009 Association for Computational Linguistics We propose a semi-supervised approach based on minimum cut in a lexical relation graph to assign subjectivity (subjective/objective) labels to word senses.2 Our algorithm outperforms supervised minimum cuts and standard supervised, non-graph classification algorithms (like SVM), reducing the error rate by up to 40%.
+0	In addition, the semi-supervised approach achieves the same results as the supervised framework with less than 20% of the training data.
+0	Our approach also outperforms prior approaches to the subjectivity recognition of word senses and performs well across two different data sets.
+0	The remainder of this paper is organized as follows.
+0	Section 2 discusses previous work.
+0	Section 3 describes our proposed semi-supervised minimum cut framework in detail.
+0	Section 4 presents the experimental results and evaluation, followed by conclusions and future work in Section 5.
+0	There has been a large and diverse body of research in opinion mining, with most research at the text (Pang et al., 2002; Pang and Lee, 2004; Popescu and Etzioni, 2005; Ounis et al., 2006), sentence (Kim and Hovy, 2005; Kudo and Matsumoto, 2004; Riloff et al., 2003; Yu and Hatzivassiloglou, 2003) or word (Hatzivassiloglou and McKeown, 1997; Turney and Littman, 2003; Kim and Hovy, 2004; Takamura et al., 2005; Andreevskaia and Bergler, 2006; Kaji and Kitsuregawa, 2007) level.
+0	An up-to-date overview is given in Pang and Lee (2008).
+0	Graph-based algorithms for classification into subjective/objective or positive/negative language units have been mostly used at the sentence and document level (Pang and Lee, 2004; Agarwal and Bhattacharyya, 2005; Thomas et al., 2006), instead of aiming at dictionary annotation as we do.
+0	We also cannot use prior graph construction methods for the document level (such as physical proximity of sentences, used in Pang and Lee (2004)) at the word sense level.
+0	At the word level Takamura et al.
+0	(2005) use a semi-supervised spin model for word polarity determination, where the graph 2 It can be argued that subjectivity labels are maybe rather more graded than the clear-cut binary distinction we assign.
+0	However, in Su and Markert (2008a) as well as Wiebe and Mi- halcea (2006) we find that human can assign the binary distinction to word senses with a high level of reliability.
+0	is constructed using a variety of information such as gloss co-occurrences and WordNet links.
+0	Apart from using a different graph-based model from ours, they assume that subjectivity recognition has already been achieved prior to polarity recognition and test against word lists containing subjective words only.
+0	However, Kim and Hovy (2004) and Andreevskaia and Bergler (2006) show that subjectivity recognition might be the harder problem with lower human agreement and automatic performance.
+0	In addition, we deal with classification at the word sense level, treating also subjectivity-ambiguous words, which goes beyond the work in Takamura et al.
+0	(2005).
+0	Word Sense Level: There are three prior approaches addressing word sense subjectivity or polarity classification.
+0	Esuli and Sebastiani (2006) determine the polarity (positive/negative/objective) of word senses in WordNet.
+0	However, there is no evaluation as to the accuracy of their approach.
+0	They then extend their work (Esuli and Sebastiani, 2007) by applying the Page Rank algorithm to rank the WordNet senses in terms of how strongly a sense possesses a given semantic property (e.g., positive or negative).
+0	Apart from us tackling subjectivity instead of polarity, their Page Rank graph is also constructed focusing on WordNet glosses (linking glosses containing the same words), whereas we concentrate on the use of WordNet relations.
+0	Both Wiebe and Mihalcea (2006) and our prior work (Su and Markert, 2008) present an annotation scheme for word sense subjectivity and algorithms for automatic classification.
+0	Wiebe and Mi- halcea (2006) use an algorithm relying on distributional similarity and an independent, large manually annotated opinion corpus (MPQA) (Wiebe et al., 2005).
+0	One of the disadvantages of their algorithm is that it is restricted to senses that have distributionally similar words in the MPQA corpus, excluding 23% of their test data from automatic classification.
+0	Su and Markert (2008) present supervised classifiers, which rely mostly on WordNet glosses and do not effectively exploit WordNet’s relation structure.
+0	3.1 Minimum Cuts: The Main Idea.
+0	Binary classification with minimum cuts (Mincuts) in graphs is based on the idea that similar items should be grouped in the same cut.
+0	All items in the training/test data are seen as vertices in a graph with undirected weighted edges between them specifying how strong the similarity/association between two vertices is. We use minimum s-t cuts: the graph contains two particular vertices s (source, corresponds to subjective) and t (sink, corresponds to objective) and each vertex u is connected to s and t via a weighted edge that can express how likely u is to be classified as s or t in isolation.
+0	Binary classification of the vertices is equivalent to splitting the graph into two disconnected subsets of all vertices, S and T with s ∈ S and t ∈ T . This corresponds to removing a set of edges from the graph.
+0	As similar items should be in the same part of the split, the best split is one which removes edges with low weights.
+0	In other words, a minimum cut problem is to find a partition of the graph which minimizes the following formula, where w(u, v) expresses the weight of an edge between two vertices.
+0	subjective or both objective.3 An example here is the antonym relation, where two antonyms such as good—morally admirable and evil, wicked—morally bad or wrong are both subjective.
+0	Second, Mincuts can be easily expanded into a semi-supervised framework (Blum and Chawla, 2001).
+0	This is essential as the existing labeled datasets for our problem are small.
+0	In addition, glosses are short, leading to sparse high dimensional vectors in standard feature representations.
+0	Also, WordNet connections between different parts of the WordNet hierarchy can also be sparse, leading to relatively isolated senses in a graph in a supervised framework.
+0	Semi-supervised Mincuts allow us to import unlabeled data that can serve as bridges to isolated components.
+0	More importantly, as the unlabeled data can be chosen to be related to the labeled and test data, they might help pull test data to the right cuts (categories).
+0	3.3 Formulation of Semi-supervised Mincuts.
+0	W (S, T ) = ) u∈S,v∈T w(u, v)The formulation of our semi supervised Mincut for sense subjectivity classification involves the follow Globally optimal minimum cuts can be found in polynomial time and near-linear running time in practice, using the maximum flow algorithm (Pang and Lee, 2004; Cormen et al., 2002).
+0	3.2 Why might Semi-supervised Minimum.
+0	Cuts Work?
+0	We propose semi-supervised mincuts for subjectivity recognition on senses for several reasons.
+0	First, our problem satisfies two major conditions necessary for using minimum cuts.
+0	It is a binary classification problem (subjective vs. objective senses) as is needed to divide the graph into two components.
+0	Our dataset also lends itself naturally to s-t Mincuts as we have two different views on the data.
+0	Thus, the edges of a vertex (=sense) to the source/sink can be seen as the probability of a sense being subjective or objective without taking similarity to other senses into account, for example via considering only the sense gloss.
+0	In contrast, the edges between two senses can incorporate the WordNet relation hierarchy, which is a good source of similarity for our problem as many WordNet relations are subjectivity-preserving, i.e. if two senses are connected via such a relation they are likely to be both ing steps, which we later describe in more detail.
+0	1.
+0	We define two vertices s (source) and t (sink),.
+0	which correspond to the “subjective” and “objective” category, respectively.
+0	Following the definition in Blum and Chawla (2001), we call the vertices s and t classification vertices, and all other vertices (labeled, test, and unlabeled data) example vertices.
+0	Each example vertex corresponds to one WordNet sense and is connected to both s and t via a weighted edge.
+0	The latter guarantees that the graph is connected.
+0	2.
+0	For the test and unlabeled examples, we see.
+0	the edges to the classification vertices as the probability of them being subjective/objective disregarding other example vertices.
+0	We use a supervised classifier to set these edge weights.
+0	For the labeled training examples, they are connected by edges with a high constant weight to the classification vertices that they belong to.
+0	3.
+0	WordNet relations are used to construct the.
+0	edges between two example vertices.
+0	Such 3 See Kamps et al.
+0	(2004) for an early indication of such properties for some WordNet relations.
+0	edges can exist between any pair of example vertices, for example between two unlabeled examples.
+0	maximum-flow algorithm to find the minimum s-t cuts of the graph.
+0	The cut in which the source vertex s lies is classified as “subjective”, and the cut in which the sink vertex t lies is “objective”.
+0	to reflect the degree to which they are subjectivity- preserving.
+0	Therefore, we experiment with two methods of weight assignment.
+0	Method 1 (NoSL) assigns the same constant weight of 1.0 to all Word- Net relations.
+0	Method 2 (SL) reflects different degrees of preserving subjectivity.
+0	To do this, we adapt an unsupervised method of generating a large noisy set of subjective and objective senses from our previous work (Su and Markert, 2008).
+0	This method 5 We now describe the above steps in more detail.
+0	uses a list of subjective words (SL) to classify each Selection of unlabeled data: Random selection of unlabeled data might hurt the performance of Mincuts, as they might not be related to any sense in our training/test data (denoted by A).
+0	Thus a basic principle is that the selected unlabeled senses should be related to the training/test data by WordNet relations.
+0	We therefore simply scan each sense in A, and collect all senses related to it via one of the WordNet relations in Table 1.
+0	All such senses that are not in A are collected in the unlabeled data set.
+0	Weighting of edges to the classification vertices: The edge weight to s and t represents how likely it is that an example vertex is initially put in the cut in which s (subjective) or t (objective) lies.
+0	For unlabeled and test vertices, we use a supervised classifier (SVM4) with the labeled data as training data to assign the edge weights.
+0	The SVM is also used as a baseline and its features are described in Section 4.3.
+0	As we do not wish the Mincut to reverse labels of the labeled training data, we assign a high constant weight of 5 to the edge between a labeled vertex and its corresponding classification vertex, and a low weight of 0.01 to the edge to the other classification vertex.
+0	Assigning weights to WordNet relations: We connect two vertices that are linked by one of the ten WordNet relations in Table 1 via an edge.
+0	Not all WordNet relations we use are subjectivity- preserving to the same degree: for example, hyponyms (such as simpleton) of objective senses (such as person) do not have to be objective.
+0	However, we aim for high graph connectivity and we can assign different weights to different relations 4 We employ LIBSVM, available at http://www.csie..
+0	WordNet sense with at least two subjective words in its gloss as subjective and all other senses as objective.
+0	We then count how often two senses related via a given relation have the same or a different subjectivity label.
+0	The weight is computed by #same/(#same+#different).
+0	Results are listed in Table 1.
+0	Table 1: Relation weights (Method 2) M et ho d #S a m e #D iff er en t W ei gh t An to ny m 2, 80 8 30 9 0.
+0	90 Si milar to 6, 88 7 1, 61 4 0.
+0	81 De riv ed fro m 4, 63 0 94 7 0.
+0	83 Dir ect Hy pe rn y m 71 ,9 15 8, 60 0 0.
+0	89 Dir ect Hy po ny m 71 ,9 15 8, 60 0 0.
+0	89 Att rib ut e 35 0 10 9 0.
+0	76 Al so se e 1, 03 7 33 7 0.
+0	75 Ex ten ded An ton ym 6, 91 7 1, 65 1 0.
+0	81 Do m ai n 4, 38 7 89 2 0.
+0	83 Do m ain m e m be r 4, 38 7 89 2 0.
+0	83 Example graph: An example graph is shown in Figure 1.
+0	The three example vertices correspond to the senses religious—extremely scrupulous and conscientious, scrupulous—having scruples; arising from a sense of right and wrong; principled; and flicker, spark, glint—a momentary flash of light respectively.
+0	The vertex “scrupulous” is unlabeled data derived from the vertex “religious”(a test item) by the relation “similar-to”.
+0	4 Experiments and Evaluation.
+0	4.1 Datasets.
+0	We conduct the experiments on two different gold standard datasets.
+0	One is the MicroWNOp corpus, ntu.edu.tw/˜cjlin/libsvm/.
+0	Linear kernel and probability estimates are used in this work.
+0	http://www.cs.pitt.edu/mpq a subjective 0.24 0.83 religio us similar-to 0.81 scrupulo us 0.76 0.17 objective baseline.8 Three different feature types are used.
+0	Lexic al Feature s (L): a bag-of words represen tation of the sense glosses with stop word filtering.
+0	Relati on Feature s (R): First, we use two features for each of the ten WordNet relations in Table 1, describing how many relations of that type the sense has to senses in the subjectiv e or objective part of the training set, respectiv ely.
+0	This provides a non graph 0.16 0.84 flicker Figure 1: Graph of Word Senses which is representative of the part-of-speech distribution in WordNet 6.
+0	It includes 298 words with 703 objective and 358 subjective WordNet senses.
+0	The second one is the dataset created by Wiebe and Mihalcea (2006).7 It only contains noun and verb senses, and includes 60 words with 236 objective and 92 subjective WordNet senses.
+0	As the MicroWNOp set is larger and also contains adjective and adverb senses, we describe our results in more detail on that corpus in the Section 4.3 and 4.4.
+0	In Section 4.5, we shortly discuss results on.
+0	Wiebe&Mihalcea’s dataset.
+0	4.2 Baseline and Evaluation.
+0	We compare to a baseline that assigns the most frequent category objective to all senses, which achieves an accuracy of 66.3% and 72.0% on MicroWNOp and Wiebe&Mihalcea’s dataset respectively.
+0	We use the McNemar test at the significance level of 5% for significance statements.
+0	All evaluations are carried out by 10-fold cross-validation.
+0	4.3 Standard Supervised Learning.
+0	We use an SVM classifier to compare our proposed semi-supervised Mincut approach to a reasonable
+0	summary of subjectivity-preserving links.
+0	Second, we manually collected a small set (denoted by SubjSet) of seven subjective verb and noun senses which are close to the root in WordNet’s hypernym tree.
+0	A typical example element of SubjSet is psychological feature —a feature of the mental life of a living organism, which indicates subjectivity for its hyponyms such as hope — the general feeling that some desire will be fulfilled.
+0	A binary feature describes whether a noun/verb sense is a hyponym of an element of SubjSet.
+0	Monosemous Feature (M): for each sense, we scan if a monosemous word is part of its synset.
+0	If so, we further check if the monosemous word is collected in the subjective word list (SL).
+0	The intuition is that if a monosemous word is subjective, obviously its (single) sense is subjective.
+0	For example, the sense uncompromising, inflexible—not making concessions is subjective, as “uncompromising” is a monosemous word and also in SL.
+0	We experiment with different combinations of features and the results are listed in Table 2, prefixed by “SVM”.
+0	All combinations perform significantly better than the more frequent category baseline and similarly to the supervised Naive Bayes classifier (see S&M in Table 2) we used in Su and Mark- ert (2008).
+0	However, improvements by adding more features remain small.
+0	In addition, we compare to a supervised classifier (see Lesk in Table 2) that just assigns each sense the subjectivity label of its most similar sense in the training data, using Lesk’s similarity measure from Pedersen’s WordNet similarity package9.
+0	We use Lesk as it is one of the few measures applicable across all parts-of-speech.
+0	markert/data.
+0	This dataset was first used with a different annotation scheme in Esuli and Sebastiani (2007) and we also used it in Su and Markert (2008).
+0	pubs/papers/goldstandard.total.acl06.
+0	classification vertices in the Mincut approach.
+0	9 Available at http://www.d.umn.edu/˜tpederse/.
+0	similarity.html.
+0	Table 2: Results of SVM and Mincuts with different settings of feature M et ho d S u b j e c t i v e O b j e c t i v e Ac cu ra cy Pr eci sio n Re cal lF sc or e Pr eci sio n Re cal lF sc or e Ba sel in e N/ A 0 N/ A 66 .3 % 10 0 % 79 .7 % 66 .3 % S & M 66 .2 % 64 .5 % 65 .3 % 82 .2 % 83 .2 % 82 .7 % 76 .9 % Le sk 65 .6 % 50 .3 % 56 .9 % 77 .5 % 86 .6 % 81 .8 % 74 .4 % S VM L 69 .6 % 37 .7 % 48 .9 % 74 .3 % 91 .6 % 82 .0 % 73 .4 %L SL 82 .0 % 43 .3 % 56 .7 % 76 .7 % 95 .2 % 85 .0 % 77 .7 %L No SL 80 .8 % 43 .6 % 56 .6 % 76 .7 % 94 .7 % 84 .8 % 77 .5 % S VM L M 68 .9 % 42 .2 % 52 .3 % 75 .4 % 90 .3 % 82 .2 % 74 .1 % LM SL 83 .2 % 44 .4 % 57 .9 % 77 .1 % 95 .4 % 85 .3 % 78 .2 % LM No SL 83 .6 % 44 .1 % 57 .8 % 77 .1 % 95 .6 % 85 .3 % 78 .2 % S VM LR 68 .4 % 45 .3 % 54 .5 % 76 .2 % 89 .3 % 82 .3 % 74 .5 % LR SL 82 .7 % 65 .4 % 73 .0 % 84 .1 % 93 .0 % 88 .3 % 83 .7 % LR No SL 82 .4 % 65 .4 % 72 .9 % 84 .0 % 92 .9 % 88 .2 % 83 .6 % S VM LR M 69 .8 % 47 .2 % 56 .3 % 76 .9 % 89 .6 % 82 .8 % 75 .3 % LRM SL 85 .5 % 65 .6 % 74 .2 % 84 .4 % 94 .3 % 89 .1 % 84 .6 % LRM No SL 84 .6 % 65 .9 % 74 .1 % 84 .4 % 93 .9 % 88 .9 % 84 .4 % 1 L, R and M correspond to the lexical, relation and monosemous features respectively.
+0	2 SVM-L corresponds to using lexical features only for the SVM classifier.
+0	Likewise, SVM-.
+0	LRM corresponds to using a combination for lexical, relation, and monosemous features for the SVM classifier.
+0	3 L-SL corresponds to the Mincut that uses only lexical features for the SVM classifier, and subjective list (SL) to infer the weight of WordNet relations.
+0	Likewise, LMNoSL corresponds to the Mincut algorithm that uses lexical and monosemous features for the SVM, and predefined constants for WordNet relations (without subjective list).
+0	4.4 Semi-supervised Graph Mincuts.
+0	Using our formulation in Section 3.3, we import 3,220 senses linked by the ten WordNet relations to any senses in MicroWNOp as unlabeled data.
+0	We construct edge weights to classification vertices using the SVM discussed above and use WordNet relations for links between example vertices, weighted by either constants (NoSL) or via the method illustrated in Table 1 (SL).
+0	The results are also summarized in Table 2.
+0	Semi-supervised Mincuts always significantly outperform the corresponding SVM classifiers, regardless of whether the subjectivity list is used for setting edge weights.
+0	We can also see that we achieve good results without using any other knowledge sources (setting LRNoSL).
+0	The example in Figure 1 explains why semi- supervised Mincuts outperforms the supervised approach.
+0	The vertex “religious” is initially assigned the subjective/objective probabilities 0.24/0.76 by the SVM classifier, leading to a wrong classification.
+0	However, in our graph-based Mincut framework, the vertex “religious” might link to other vertices (for example, it links to the vertex “scrupulous” in the unlabeled data by the relation “similar-to”).
+0	The mincut algorithm will put vertices “religious” and “scrupulous” in the same cut (subjective category) as this results in the least cost 0.93 (ignoring the cost of assigning the unrelated sense of “flicker”).
+0	In other words, the edges between the vertices are likely to correct some initially wrong classification and pull the vertices into the right cuts.
+0	In the following we will analyze the best minimum cut algorithm LRMSL in more detail.
+0	We measure its accuracy for each part-of-speech in the MicroWNOp dataset.
+0	The number of noun, adjective, adverb and verb senses in MicroWNOp is 484, 265, 31 and 281, respectively.
+0	The result is listed in Table 3.
+0	The significantly better performance of semi-supervised mincuts holds across all parts-of- speech but the small set of adverbs, where there is no significant difference between the baseline, SVM and the Mincut algorithm.
+0	Mincuts SVM with different sizes of labeled and unlabeled data.
+0	All learning curves are generated via averaging 10 learning curves from 10-fold cross-validation.
+0	Performance with different sizes of labeled data: we randomly generate subsets of labeled data A1, A2...
+0	An, and guarantee that A1 ⊂ A2... ⊂ An.Results for the best SVM (LRM) and the best min imum cut (LRMSL) are listed in Table 4, and the corresponding learning curve is shown in Figure 2.
+0	As can be seen, the semi-supervised Mincuts is consistently better than SVM.
+0	Moreover, the semi- supervised Mincut with only 200 labeled data items performs even better than SVM with 954 training items (78.9% vs 75.3%), showing that our semi- supervised framework allows for a training data reduction of more than 80%.
+0	Table 4: Accuracy with different sizes of labeled data 71 68 100 200 300 400 500 600 700 800 900 1000 Size of Labeled Data Figure 2: Learning curve with different sizes of labeled data The results are listed in Table 5 and Table 6 respectively.
+0	The corresponding learning curves are shown in Figure 3.
+0	We see that performance improves with the increase of unlabeled data.
+0	In addition, the curves seem to converge when the size of unlabeled data is larger than 3,000.
+0	From the results in Tabel 5 one can also see that hyponymy is the relation accounting for the largest increase.
+0	Table 6: Accuracy with different sizes of unlabeled data (random selection) # unl ab ele d da ta Ac cu ra cy 0 75 .9 % 20 0 76 .5 % 50 0 78 .6 % 10 00 80 .2 % 20 00 82 .8 % 30 00 84 .0 % 32 20 84 .6 % Performance with different sizes of unlabeled data: We propose two different settings.
+0	Option1: Use a subset of the ten relations to generate the unlabeled data (and edges between example vertices).
+0	For example, we first use {antonym, similar-to} only to obtain a unlabeled dataset U1, then use a larger subset of the relations like {antonym, similar-to, direct-hyponym, direct- hypernym} to generate another unlabeled dataset U2, and so forth.
+0	Obviously, Ui is a subset of Ui+1.
+0	Option2: Use all the ten relations to generate the unlabeled data U . We then randomly select subsets of U , such as subset U1, U2 and U3, and guarantee that U1 ⊂ U2 ⊂ U3 ⊂ . . .
+0	U . Furthermore, these results also show that a supervised mincut without unlabeled data performs only on a par with other supervised classifiers (75.9%).
+0	The reason is that if we exclude the unlabeled data, there are only 67 WordNet relations/edges between senses in the small MicroWNOp dataset.
+0	In contrast, the use of unlabeled data adds more edges (4,586) to the graph, which strongly affects the graph cut partition (see also Figure 1).
+0	4.5 Comparison to Prior Approaches.
+0	In our previous work (Su and Markert, 2008), we report 76.9% as the best accuracy on the same Micro Table 5: Accuracy with different sizes of unlabeled data from WordNet relation Re lati on # unl ab ele d da ta Ac cu ra cy {∅ } 0 75 .3 % {si milar to } 41 8 79 .1 % {si milar to, ant on ym } 51 4 79 .5 % {si milarto, antonym, direct-hypernym, direct hy po ny m } 2, 72 1 84 .4 % {si milarto, antonym, direct-hypernym, direct hy po ny m, also se e, ext en ded ant on ym } 3, 00 4 84 .4 % {si milarto, antonym, direct-hypernym, direct hy po ny m, al so se e, ex te nd ed an to ny m, d eri ved fr o m , at tri bu te , d o m ai n, d o m ain m e m be r} 3, 22 0 84 .6 % 89 Option1 87 Option2.
+0	85 83 81 79 77 75 0 500 1000 1500 2000 2500 3000 3500 Size of Unlabeled Data Figure 3: Learning curve with different sizes of unlabeled data WNOp dataset used in the previous sections, using a supervised Naive Bayes (S&M in Tabel 2).
+0	Our best result from Mincuts is significantly better at 84.6% (see LRMSL in Table 2).
+0	For comparison to Wiebe and Mihalcea (2006), we use their dataset for testing, henceforth called Wiebe (see Section 4.1 for a description).
+0	Wiebe and Mihalcea (2006) report their results in precision and recall curves for subjective senses, such as a precision of about 55% at a recall of 50% for subjective senses.
+0	Their F-score for subjective senses seems to remain relatively static at 0.52 throughout their precision/recall curve.
+0	We run our best Mincut LRMSL algorithm with two different settings on Wiebe.
+0	Using MicroWNOp as training set and Wiebe as test set, we achieve an accuracy of 83.2%, which is similar to the results on the MicroWNOp dataset.
+0	At the recall of50% we achieve a precision of 83.6% (in compari son to their precision of 55% at the same recall).
+0	Our F-score is 0.63 (vs. 0.52).
+0	To check whether the high performance is just due to our larger training set, we also conduct 10-fold cross-validation on Wiebe.
+0	The accuracy achieved is 81.1% and the F-score 0.56 (vs. 0.52), suggesting that our algorithm performs better.
+0	Our algorithm can be used on all WordNet senses whereas theirs is restricted to senses that have distributionally similar words in the MPQA corpus (see Section 2).
+0	However, they use an unsupervised algorithm i.e. they do not need labeled word senses, although they do need a large, manually annotated opinion corpus.
+0	5 Conclusion and Future Work.
+0	We propose a semi-supervised minimum cut algorithm for subjectivity recognition on word senses.
+0	The experimental results show that our proposed approach is significantly better than a standard supervised classification framework as well as a supervised Mincut.
+0	Overall, we achieve a 40% reduction in error rates (from an error rate of about 25% to an error rate of 15%).
+0	To achieve the results of standard supervised approaches with our model, we need less than 20% of their training data.
+0	In addition, we compare our algorithm to previous state-of-the-art approaches, showing that our model performs better on the same datasets.
+0	Future work will explore other graph construction methods, such as the use of morphological relations as well as thesaurus and distributional similarity measures.
+0	We will also explore other semi- supervised algorithms.

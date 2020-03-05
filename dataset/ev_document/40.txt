@@ -1,0 +1,211 @@
+0	Strategic Lazy Incremental Copy Graph Unification
+0	The strategic lazy incremental copy graph unification method is a combination of two methods for unifying hmture structures.
+0	One, called the lazy incremental copy graph unification method, achieves structure sharing with constant order data access time which reduces the cequired memory.
+0	The other, called ti~e strategic incremental copy graph unification method, uses an early failure finding strategy which first tries to unify :;ubstructures tending to fail in unification; this method is; based on stochastic data on tim likelihood of failure and ,'educes unnecessary computation.
+0	The combined method .makes each feature structure unification efficient and also reduces garbage collection and page swapping occurrences, thus increasing the total efficiency of natural language processing systems mainly based on I.yped feature structure unification such as natural language analysis and generation sysl~ems.
+0	Various kinds of grammatical formalisms without t,ranstormation were proposed from the late 1970s I;hrough the 1980s l(]azder eL al 85, l(aplan and Bresnan 82, Kay 1~5, Pollm'd and Sag 871.
+0	These furnmlisms were developed relatively independentIy but actually had common properties; th'~t is, they used data structures called ftmctional structures or feature structures and they were based on unilieathm operation on these data structures.
+0	These formalisms were applied in the field of natural language processing and, based on these formalisms, ~:~ystems such as machine translation systems were developed [l<ol;u, e et a l 8gJ.
+0	In such unification-based formalisms, feature ~trueture (FS) unification is the most fundamental and ..~ignifieant operation.
+0	The efficiency of systems based on ..~uch formalisms, such as natural language analysis and generation systems very much depends on their FS ~lnifieatlon efficiencies.
+0	Tiffs dependency is especially crucial for lexicon-driven approaches such as tlPSO[Pollard and Sag 861 and JPSG[Gunji 871 because rich lexieal information and phrase structure information is described in terms of FSs.
+0	For example, a spoken Present.
+0	affiliation: Infi)rmation Science Research 1,aboratory, NTT Basic Research i.aboratories.
+0	lh'esenl, address: 9 11, Midori cho 3-theme, Musashinoshi, Tokyo 180, Japan.
+0	Japanese analysis system based on llPSG[Kogure 891 uses 90% - 98% of the elapsed time in FS unification.
+0	Several FS unificatioa methods were proposed in IKarttunen 86, l'ereira 85, Wroblewski 871.
+0	These methods uses rooted directed graphs (DGs) to represent FSs.
+0	These methods take two DGs as their inputs and give a unification result DG.
+0	Previous research identified DG copying as a significant overhead.
+0	Wroblewski claims that copying is wrong when an algorithm copies too much (over copying) or copies too soon (early copying).
+0	Ile proposed an incremental copy graph unification method to avoid over copying and early copying.
+0	itowever, the problem with his method is that a unitication result graph consists only of newly created structures.
+0	This is unnecessary because there are often input snbgraphs that can be used as part of the result graph without any modification, or as sharable parts between one of the input graphs and the result graph.
+0	Copying sharable parts is called redundant copying.
+1	A better method would nfinimize the copying of sharable varts.
+0	The redundantly copied parts are relatively large when input graphs have few common feature paths.
+0	In natural language processing, such cases are ubiquitous.
+0	I"or example, in unifying an FS representing constraints on phrase structures and an FS representing a daughter phrase structure, such eases occur very h'equent, ly.
+0	In Kasper's disjunctive feature description unification [Kasper 861, such cases occur very h'equently in unifying definite and disjunct's definite parts.
+0	Memory is wasted by such redundant copying and this causes frequent garbage collection and page swapping which decrease the total system efficiency.
+0	I)eveloping a method which avoids memory wastage is very important.
+0	Pereira's structure sharing FS unification method can avoid this problem.
+0	The method achieves structure sharing by importing the Bayer and Moore approach for term structurestl~oyer and Moore 721.
+0	The method uses a data structure consisting of a skeleton part to represent original information and an environment part to represent updated information.
+0	3'he skeleton part is shared by one of the input FSs and the result FS.
+0	Therefore, Pereira's method needs relatively few new structures when two input FSs are difference in size and which input is larger are known before unification.
+0	However, Pereira's method can create skeleton-enviromnent structures that are deeply embedded, for example, in reeursively constructing large phrase structure fl'om their parts.
+0	This causes O(log d) graph node access time overhead in assembling the whole DG from the skeleton and environments where d is the number of nodes in the DG.
+0	Avoiding this problem in his method requires a special operation of merging a skeleton-environment structure into a skeleton structure, but this prevents structure sharing.
+0	This paper proposes an FS unification method that allows structure sharing with constant m'der node access time.
+0	This method achieves structure sharing by introducing lazy copying to Wroblewski's incremental copy graph unification method.
+0	The method is called the lazy i2!cremental copy IFaph unification reel, hod (the LING unifieation method for short).
+0	In a natural language proeessing system that uses deelarative constraint rules in terms of FSs, FS unification provides constraint-checking and structure- building mechanisms.
+0	The advantages of such a system include: (1)rule writers are not required to describe control infimnation such as eonstraiut application order in a rule, and (12)rule descriptions can be used iu different processing directions, i.e., analysis and general,ion.
+0	However, these advantages in describing rules are disadvantages in applying them because of tt~e lack of control information.
+0	For example, when constructing a phrase structure from its parts (e.g., a sentence fi'om a subject NP and VP), unueeessary computation can be reduced if the semantic representation is assembled after checking constraints such as grammatical agreements, which can fail.
+0	This is impossible in straightforward unification-based formalisms.
+0	In contrast, in a procedure-based system which uses IF-TItEN style rules (i.e., consisting of explicit test and structure-building operations), it is possible to construct the semantic representation (TIIEN par'g) after checking the agreement (IF part).
+0	Such a system has the advantage of processing efficiency but the disadvantage of lacking multidirectionality.
+0	In this paper, some of the efficiency of the procedure- based system is introduced into an FS unification-based system.
+0	That is, an FS unification method is proposed that introduces a strategy called the e_arly failure £inding strategy (the EFF strategy) to make FS unification efficient, in this method, FS unification orders are not specified explicitly by rule wril.ers, but are controlled by learned information on tendencies of FS constraint application failures.
+0	This method is called the strategic ij!~crementaI copy graph unification method (the SING unification method).
+0	These two methods can be combined into a single method called the strategic lazy ijAcremeatal copy g~raph unification method (the SLING unification method).
+0	Section 2 explains typed feature structures (TFSs) and unification on them.
+0	Section 3 explains a TFS unification method based on Wroblewski's method and then explains the problem with his method.
+0	The section also introduces the key idea of the EFF strategy wlfich comes from observations of his method.
+0	Section 3 and 4 introduce the LING method and the SING method, respectively.
+0	Ordinary FSs used in unification-based grammar formalisms such as PAT].{[Shieher 851 arc classified into two classes, namely, atomic leSs and complex FSs.
+0	An atomic FS is represented by an atomic symbol and a complex FS is represented by a set of feature-value pairs.
+0	Complex FSs are used to partially describe objects by specifying values for certain features or attributes of described objects.
+0	Complex FSs can have complex FSs as their feature values and can share certain values among features.
+0	For ordinary FSs, unification is defined by using partial ordering based on subsumption relationships.
+0	These properties enable flexible descriptions.
+0	An extension allows complex FSs to have type symbols which define a lattice structure on them, for example, as in [Pollard and Sag 8"11.
+0	The type symbol lattice contains the greatest type symbol Top, which subsumes every type symbol, and the least type symbol Bottom, which is subsumed by every I.ype symbol.
+0	An example of a type symbol lattice is shown in Fig.
+0	1.
+0	An extended complex FS is represented by a type symbol and a set of feature-value pairs.
+0	Once complex IeSs are extended as above, an atomic FS can be seen as an extended complex FS whose type symbol has only Top as its greater type symbol and only Bottom as its lesser type symbol and which has an empty set of feature value pairs.
+0	Extended complex FSs are called typed feature structures (TFSs).
+0	TFSs are denoted by feature-value pair matrices or rooted directed graphs as shown in Fig.
+0	2.
+0	Among such structures, unification c'm be defined IAP,- Kaci 861 by using the following order; ATFS tl is less than or equal to a TFS t2 if and only if:  the type symbol of tl is less than or equal to the type syn'bol of/2; and  each of the features of t2 exists in t1 and.
+0	has as its value a TFS which is not less than its counterpart in tl ; and each of the coreference relationships in t2 is also held in tl.
+0	Top Sign Syn Head List POS /77 Lexical Phrase Sign NonEmpty Empty V N P ADV Slgn Li.
+0	Lis~ ust I I I I NonEmpty Emply I I i I Sign Sign I I/ / List List 5/ /5 ....
+0	U_ Bottom Figure 1: Exainple of a type symbol lattice --2-- peSymb°10 eaturel TypeSymboll ] ]] I feature2 TypeSymbol2 I feature3 ?Tag T ypeSymbol3 ] ]feature4 TypeSymbol4 L [.feature5 TypeSymbol5 TIeature3 7Tag (a) feature-value matrix notation "?" i~ the prefix for a tag and TFSs with the same tag are token-identical.
+0	TypeSym bol/~ feo~.,o/ I TypeSymboll ~ [.
+0	TypeSymbol2 4¢" '~°~'~/.~ypeSymbol3 featury "X~ature5 TypeSymbol4 4r "~TypeSymbol5 (b) directed graph notation Figure 2: TFS notations Phrase [sub(at ?X2 SignList ] dtrs CHconst Sign U Syn i'oo I syn I head ?Xl . ] ubcat NonEmptySignLIst | ['first ]1 ?×3 Lrest ?X2 J j Phrase -dtrs CHconst hdtr LexicalSignsyn Syn -head Head pos P orm Ga subcat NonEmptySignList Sign ,11 yn Synead Head L~,os N] Irest EmptySignkist Phrase "syn Syn head ?X1 Head Fpos P Lform Ga ] Lsubcat ?X2 Empl.ySignList dtrs CHconst ccltr ?X3 Sign syn iyn head Head _ [pos N hdtr LexicalSign l-syn Syn l I F head :x~ 7/ Lsubcat [ NonEinptySignList l l P"" ~×~ llll Lrest ?X2 JJjJ Figure 3: Example of TFS unification Then, the unification of tl anti t2 is defined as their greatest lower bound or the meet.
+0	A unification example is shown in Fig.
+0	3.
+0	In tile directed graph notation, TFS unification corresponds to graph mergi ng.
+0	TFSs are very convenient for describing linguistic information in unlfication-based formalisms.
+0	In TFS unification based on Wrobtewski's method, a DG is represented by tile NODE and ARC structures corresponding to a TFS and a feature-value pair respectively, as shown in Fig.
+0	4.
+0	The NODE structure has the slots TYPESYMBOL to represent a type symbol, ARCS to represent a set of feature-value pairs, GENERATION to specify the unification process in which the structure has been created, FORWARD, and COPY.
+0	When a NODE's GENERATION value is equal to the global value specifying the current unit]cation process, the structure has been created in the current process or that the structure is currel~l. The characteristics which allow nondestructive incremental copy are the NODE's two different slots, FORWARD and COPY, for representing forwarding relationships.
+0	A FORWARD slot value represents an eternal relationship while a COPY slot value represents a temporary relationship.
+0	When a NODE node1 has a NODE node2 as its FORWARD value, the other contents of tile node1 are ignored and tim contents of node2 are used.
+0	t{owever, when a NODE has another NODE as its COPY value, the contents of the COPY value are used only when the COPY value is cub:rent.
+0	After the process finishes, all COPY slot values are ignored and thus original structures are not destroyed.
+0	The unification procedure based on this method takes as its input two nodes which are roots of the DGs to be unified.
+0	The procedure incrementally copies nodes and ares on the subgraphs of each input 1)G until a node with an empty ARCS value is found.
+0	The procedure first dereferences both root nodes of the input DGs (i.e., it follows up FORWARD and COPY slot values).
+0	If the dereferenee result nodes arc identical, the procedure finishes and returns one of the dereference result nodes.
+0	Next, the procedure calculates the meet of their type symbol.
+0	If the meet is Bottom, which means inconsistency, the procedure finishes and returns Bottom.
+0	Otherwise, the procedure obtains the output node with the meet as its TYPESYMBOL.
+0	The output node has been created only when neither input node is current; or otherwise the output node is an existing current node.
+0	Next, the procedure treats arcs.
+0	The procedure assumes the existence of two procedures, namely, SharedArcs and ComplementArcs.
+0	The SharedArcs procedure takes two lists of arcs as its arguments and gives two lists of arcs each of which contains arcs whose labels exists in both lists with the same arc label order.
+0	The ComplementArcs procedure takes two lists of arcs as NODE TYPESYMBOL: <symbol> [ ARCS: <a list of ARC structures > FORWARD: "<aNODEstructure orNIL> / COPY: < a NODEstructure or Nil, > GENERATION: <an integer> ARC LABEL: <symbol> VALUE: <:a NODEstructure> Figure 4: Data Structures for Wroblewski's method Input graph GI Input graph 62 ¢ .......'77 ........ i : Sobg,'aphs not required to be copied L ...........................................
+0	Output graph G3 Figure 5: Incremental copy graph unification In this figure, type symbols are omitted.
+0	its arguments and gives one list of arcs whose labels are unique to one input list.
+0	The unification procedure first treats arc pairs obtained by SharedArcs.
+0	The procedure applies itself ,'ecursively to each such arc pair values and adds to the output node every arc with the same label as its label and the unification result of their values unless the tmification result is Bottom.
+0	Next, the procedure treats arcs obtained by ComplementArcs.
+0	Each arc value is copied and an arc with the same label and the copied value is added to the output node.
+0	For example, consider the case when feature a is first treated at the root nodes of G1 and G2 in Fig.
+0	5.
+0	The unification procedure is applied recursively to feature a values of the input nodes.
+0	The node specified by the feature path <a> fi'om input graph G1 (Gl/<a>) has an arc with the label c and the corresponding node of input graph G2 does not.
+0	The whole subgraph rooted by 6 l/<a c> is then copied.
+0	This is because such subgraphs can be modified later.
+0	For example, the node Y(G3/<o c g>) will be modified to be the unification result of G 1/<a c g> (or G1/<b d>) and G2/<b d> when the feature path <b d> will be treated.
+0	Incremental Copy Graph Unification PROCEDURE Unify(node1, node2) node1 = Dereference(nodel).
+0	node2 = Dereferencelnode2).
+0	IF Eq?(nodel, node2) THEN Return(node1).
+0	ELSE meet = Meet(nodel.typesymbol, node2.typesymbol) IF Equal?(meet, Bottom) THEN Return(Bottom).
+0	ELSE outnode = GetOutNode(nodel, node2, meet).
+0	(sharedst, shareds2) = SharedArcs(nodel.arcs, node2.arcs).
+0	complements1 = ComplementArcs(node|.arcs, node2.arcs).
+0	complements2 = ComplementArcs(node2.arcs, nodel.arcs).
+0	FOR ALL (sharedt, shared2) IN (sharedsl, shareds2) DO arcnode = Unify(sharedl.value, shared2.value).
+0	IF Equal?(arcnode, Bottom) ]HEN Return(Bottom).
+0	ELSE AddArc(outnode, sharedl.label, arcnode).
+0	ENDIF IF Eq?(outnode, node1) THEN coi'nplements = complement2.
+0	ELSE IF Eq?(outnode, node2) THEN complements = complementL ELSE complements = Append(complements1, complements2].
+0	ENDIF FORALL complement IN complements DO newnode = CopyNode(complement.value).
+0	AddArc(outnode, complement.label, newnode).
+0	Return(outnode).
+0	ENDIF ENDIE ENDPROCEDURE Figure 6: Incremental copy graph unification procedure The problem with Wroblewski's method is that tile whole result DG is created by using only newly created structures.
+0	In the example in Fig.
+0	5, the subgraphs of the result DG surrounded by the dashed rectangle can be shared with subgraphs of input structures G1 and G2, Section 4 proposes a method t.hat avoids this problem, Wroblewski's method first treats arcs with labels that exist in both input nodes and then treats arcs with unique labels.
+0	This order is related to the unification failure tendency.
+0	Unification fails in treating arcs with common labels more often than in treating arcs with unique labels.
+0	Finding a failure can stop further computation as previously described, and thus finding failures first reduces unnecessary computation.
+0	This order strategy can be generalized to the EFF and applied to the ordering of arcs with common labels.
+0	In Section 5, a method which uses this generalized strategy is proposed.
+0	In Wroblewski's method, copying unique label arc values whole in order to treat cases like ]Pig.
+0	5 disables structure sharing, ttowever, this whole copying is not necessary if a lazy evaluation method is used.
+0	With such a method, it is possible to delay copying a node until either its own contents need to change (e.g., node G3/Ka c !7>) or until it is found to have an arc (sequence) to a node t, hat needs to be copied (e.g., node X G3/<a c> in Fig.
+0	5 due to a change of node Y G3/<a c g>).
+0	To achieve this, I, he LING unification method, which uses copy dependency information, was developed.
+0	The LING unification procedure uses a revised CopyNode procedure which does not copy structures immediately.
+0	The revised procedure uses a newly introduced slot COPY-DEPENDENCY.
+0	The slot has pairs consisting of nodes and arcs as its value.
+0	The revised CopyNode procedure takes as its inputs the node to be copied node I and the arc arc I with node I as its value and node2 as its immediate ancestor node (i.e., the arc's initial node), and does the following (set Fig.
+0	7): (1) if nodel ', the dereference result of node/, is current, then CopyNode returns node l" to indicate that the ancestor node node2 must be coiffed immediately; (2)otherwise, CopyArcs is applied to node1" and if it returns ,~;everal arc copies, CopyNode creates a new copy node.
+0	It then adds the arc copies and arcs of node/' that are not copied to the new node, and returns the new node; (3) otherwise, CopyNode adds the pair consisting of the ancestor node node2 and the are arcl into the COPY- DEPENDENCY slot of node 1" and returns Nil_.
+0	,',:opyArcs applies CopyNode to each arc value with node l' as the new ancestor node and returns the set of new arcs for non-Nil_ CopyNode results.
+0	When a new copy of a node is needed later, the LING unification procedure will actually copy structures using the COPY-DEPENDENCY slot value of the node (in GetOutNode procedure in lJ'ig.
+0	6).
+0	It substitutes arcs with newly copied nodes for existing arcs.
+0	That is, antecedent nodes in the COPY-DEPENDENCY values are also copied.
+0	In the above explanation, both COPY-DEPENDENCY and COPY slots are used for the sake of simplicity.
+0	]lowever, this method can be achieved with only the COPY slot because a node does not have non-NIL COPY-I)EPENDENCY and COPY values simultaneously.
+0	The data in the COPY-DEPENDENCY slot are I;emporary and they are discarded during an extensive process such as analyzing a sentence, ttowever, this does not result in any incompleteness or in any partial analysis structure being test.
+0	Moreover, data can be accessed in a constant order time relative to the number of DG nodes and need not be reconstructed because this method does not use a data structure consisl, ing of ,';keleton and environments as does Pereira's method.
+0	The efficiency of the LING unification method depends on the proportion of newly created structures in the unification result structures.
+0	Two worst eases can be considered: (t) If there are no arcs whose labels are unique to an input node witlh respect to each other, the procedure in LING unification method behaves in the same way as the procedure in the Wroblewski's method.
+0	(2) In the worst eases, in which there are unique label arcs but all result structures are newly created, the method CopyNode PROCEDURE CopyNode(node, arc, ancestor) node = Dereference(node).
+0	IF Current?(node) THEN Return(node).
+0	ELSE IF NotEmpty?(newarcs = CopyArcs(node)) THEN newnode = Create(node.typesymbol).
+0	node.copy = newnode.
+0	FOR ALL arc IN node.arcs DO IF NotNIL?(newarc = FindArc(arc.label, newarcs)) THEN AddArc(newnode, newarc.label, newarc.value}.
+0	ELSE AddArc(newnode, arc.label, arc.value).
+0	ENDIF Returo(newnode).
+0	ELSE node.copy-dependency = node.copy-dependency U {Cons(ancestor, arc)}.
+0	Return(Nil_).
+0	ENDIF ENDPROCEDURE CopyArcs PROCEDURE AlcsCopied(node) newarcs = O- FOR ALL arc IN node.arcs DO newnode = CopyNode(arc.value, arc, node).
+0	IF NotNIL?(newnode) THEN newarc = CreateArc(arc.label, newnode).
+0	newarcs = {newarc} U newarcs.
+0	ENDIF Return(newarcs).
+0	ENDPROCEDURE Figure 7: The revised CopyNode procedure has the disadvantage of treating copy dependency information.
+0	However, these two cases are very rare.
+0	Usually, the number of features in two input structures is relatively small and the sizes of the two input structures are often very different.
+0	For example, in Kasper's disjunctive feature description unification, a definite part ["S is larger than a disjunet definite part t"S.
+0	Method In a system where FS unification is applied, there are features whose values fail relatively often in unification with other values and there are features whose values do not fail so often.
+0	For example, in Japanese sentence analysis, unification of features for conjugation forms, case markers, and semantic selectional restrictions tends to fail but unification of features for semantic representations does not fail.
+0	In such cases, application of the EFF strategy, that is, treating features tending to fall in unification first, reduces unnecessary computation when the unification finally fails.
+0	For example, when unification of features for case markers does fail, treating these features first avoids treating features for senmntic representations.
+0	The SING unification method uses this failure tendency infornmtion.
+0	These unification failure tendencies depend on systems such as analysis systems or generation systems.
+0	Unlike the analysis case, unification of features for semantic representations tends to fail.
+0	in this method, theretbre, the failure tendency information is acquired by a learning process.
+0	That is, the SING unification method applied in an analysis system uses the failure tendency information acquired by a learning analysis process.
+0	in the learning process, when FS unification is applied, feature treatment orders are randomized for the sake of random extraction.
+0	As in TFS unification, failure tendency information is recorded in terms of a triplet consisting of the greatest lower bound type symbol of the input TFSs' type symbols, a feature and success/failure flag.
+0	This is because the type symbol of a 'rFS represents salient information on the whole TFS.
+0	By using learned failure tendency information, feature value unification is applied in an order that first treats features with the greatest tendency to fail.
+0	This is achieved by the sorting procedure of common label arc pairs attached to the meet type symbol.
+0	The arc pairs obtained by the SharedArcs procedure are sorted before treating arcs.
+0	The efficiency of the SING unification method depends on the following factors: (1) The overall FS unification failure rate of the process: in extreme cases, if Go unification failure occurs, the method has no advantages except the overhead of feature unification order sorting.
+0	However, such cases do not occur in practice.
+0	(2) Number of features FSs have: if each FS has only a small number of features, the efficiency gain from the SING unification method is small.
+0	(3) Unevenness of FS unification failure tendency: in extreme cases, if every feature has the same unification failure tendency, this method has no advantage.
+0	However, such cases do not occur or are very rare, and for example, in many cases of natural language analysis, FS unification failures occur in treating only limited kinds of features related to grammatical agreement such as number and/or person agreement and semantic selectional constraints.
+0	In such cases, the SING unification method obtains efl]ciency gains.
+0	The above factors can be examined by inspecting failure tendency information, from which the efficiency gain from the SING method can be predicted.
+0	Moreover, it is possible for each type symbol to select whether to apply feature unification order sorting or not.
+0	The strategic lazy incremental copy graph (SLING) unification method combines two incremental copy graph unification methods: the lazy incremental copy graph (LING) unification method and the strategic incremental copy graph (SING) unification method.
+0	The LING unification method achieves structure sharing without the O(log d) data access overhead of Pereira's method.
+0	Structure sharing avoids memory wastage'.
+0	Furthermore, structure sharing increases the portion of token identical substructures of FSs which makes it efficient to keep unification results of substructures of FSs and reuse them.
+0	This reduces repeated calculation of substructures.
+0	The SING unification method introduces the concept of feature unification strategy.
+0	'the method treats features tending to fail in unification first.
+0	Thus, the efficiency gain fi'om this method is high when the overall FS unification failure rate of the application process is high.
+0	The combined method Inakes each FS unification efficient and also reduces garbage collection and page swapping occurrences by avoiding memory wastage, thus increasing the total efficiency of li'S unification-based natural language processing systems such aa analysis and generation systems based on IlI'SG.

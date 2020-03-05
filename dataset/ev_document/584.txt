@@ -1,0 +1,118 @@
+0	THE CORRECT AND EFFICIENT IMPLEMENTATION OF APPROPRIATENESS SPECIFICATIONS FOR TYPED FEATURE STRUCTURES
+0	in this pa,per, we argue tha, t type inferencing incorrectly implements a.pl)rolwiateness specifica.tions for typed [ea.ture structures, promote a combina.tion of l;ype resolution and unfilling a,s a. correct a.nd ef'~ ticient Mternative, and consider the expressive limits of this a.lterna.tive approa.ch.
+0	!['hroughout, we use feature cooccurence restrictions as illustration and linguistic motivation.
+0	Unification lbrmMisms ma.y be either un-typed (DCC~s, PATRII, 1,F(;) or typed (npsG).
+0	A m~L,ior reason for adding types to ~ forma,lism is to express restrictions on fea.ture cooccurences a.s in (;l's(:: [5] in order to rule out nonexista.nt tyl)es of objects.
+0	For example, there a.re no verbs which have the [km.ture +R. The simplest way to express such restrictions is by mea.ns of a.n a.ppropria.teness pa.r-tim flmction Approp: Type  Feat ~ Type.
+0	With such a.n a.pl)rol)riatleness specifica.- tion lrla.tly Sllch restrictioi,s may be expressed, though no restrictions involving reentrancies ma.y be expressed.
+0	In this pal)er, we will first in 2 survey the range of type eonstra.ints tha.t ma.y be expressed with just a. type hiera.rchy and *']'he resea.rch pl'eS(!lllL('d ill |,his; paper was pay tia.lly sponsored hy '[kfilprojekt B4 "(;onsl.rahH.s on Grammar fl~r Efficient Ck:neration" of the Soi,der forschungsbereich 340 of the Deutsche ["orschungsgemeinscha, ft. "VVe would also like to thank 'l'hilo GStz for helph,l comments ou thc ideas present.ed here.
+0	All mistakes a.rc of collrsc our OWll.
+0	IKI.
+0	Wilhehnstr.
+0	113, |)-721174Tfilfi,,ge,, (ler- ma.ny, {rig,King} g'~sfs.n phil.uni-I uebingen.de.
+0	a.n N)propria.teness specification.
+0	Then in ~3, we discuss how such type cons|fronts linty be mainta.ined under unification as exemplilied in the na.tura.1 language D~rs- ing/generation system '.l'ro]l [7].
+0	1 Unlike previous systems such as ALl,:, Troll does not employ a.ny type infereneing, inste~M, a, limited amount of named disjunction ([1 1], [12], [6])is introduced to record type resol u tion possibilities.
+0	The a.lnount of dis- junction is a.lso kept small by the technique of unlilli,g described in [9].
+0	This strategy a.ctua.lly ma.inta.ins apl)ropri~tteness conditions in some ca.ses in which a. type in-ferencing stra.tegy would fa.il, l)'inMly, in 4, we discuss the possibilities for genera lizillg this a.pl)roa.ch to ha.ndle a bro~Mer r~tnge of constra.ints, including constraints inw)lving reentran cies.
+0	As discussed iu Gerdemann ,~ King [8], one ca.n view a.pl}rol)ria.teness CO[lditions as (lelining GPSG style fea,1;tl re cooccurence restrict:ions (FCRs).
+0	In [8], we divided FCRs into co,j,,ctive and di.q,,~ctive ct~sses.
+0	A conjunctive FCI/.
+0	is a constra.int of the following fornl : i[' a.n object is of ;~ cert;fin kind then ill deserves certa.in fea.tures with wdues of cert~till kinds An FCI~ stat:ing tha,2: a. verb must h~we v and N t'eatures with values A- and -respectively is a.ll example of a. conjunctive FCI{.
+0	A disjunctive I"CI{.
+0	is of the form: l rl'he "]'roll ,qysl.em was implemented in Quintus Prolog by Dale (lerdemann and '['hilo (]Stz.
+0	if an object is of a. cel'taiu kiud then it deserves cerl;a.in [ca,1;tll'C~s with vMues of certa.hi kinds, or it deserves cerl.ahi (pei'ha.liS other) fea.1;u res \vil, h viiiues of terra.in (perlla.ps other) kinds, or ...
+0	(31:it i:leserw.;s i:erl;a.in (lmrhal)S other) fea,1;llres wil.h Vi, l.[ll(~S o[ certain (perha.ps other) khi,<ls lo::I exa~]nple, the following F(',|/.
+0	sl.a.t.iug tha,t inverCed verbs lilt|S1, lie a.uxili;tries is disjunctive: a verb Ilitisl; ha.re the ['(~il.l.tll'(~s INV and AUX with va.l/ies d a.Iid I, -a.iitl i L-, or -;Mid -respectivel.y. Both o| these |el'illS or l,'(',lls iiHly I)(!
+0	expressed in a. foi'llla.iiSlli euiployhi<~ fiiiil.e lia,rtia.[ order (Type, E) o| types tllldel' sub- 8illnptioli> a, finite sel.
+0	Feat of ro;./.t;tll.(~s, and an a.pprol)ria.teness parl, ial rliilcl.ion Approp:Type X Feat -~ Type.
+0	[uluitively; the l, ypes fornla.lize I;lie notion ol" kinds +,j" objecl, t g: t,' ill' ca.oh oil|eel, of tyl>e t' i~<i Mso of l;Ylle L, il, ll(] Approp(l, f) = lI ill' (!;i('[I object oF type t deserves [eaA.urt~ f wil.]i :i. Vi./.]lle or type ft. ~@'e call S/IC]I it.
+0	[Ol'tll;liiSlll i-i, ii ;I,])l)l"Opl']al, olio,~/ fOl'lllil]i~;lll.
+0	(',iLl'- peliLel",s AI,F, and (,erdeliia.
+0	i ;ill(| (i(~t,z's Troll are ex:-t.niples o| illilllenienl.a.Lions o| a,pF, ro]) ria, Loliess |or illa.[iSlil,s. l low an a.i)ln'oprhi.teness [orniaJisnl enco<les a conjunctive I:(',R is ob\.'i<>us~ bll(.
+0	llOW it encodes a disjuiictive I"(',1{ is less so.
+0	Ali exa.niple i|]usl;ral;es best how it.
+0	is done.
+0	~Ul)pOS0 that F( ',1{ [i sl.al.es l.hal, ob- .iecls (if type t deserw!
+0	[(!a.[./ll'(!S f 'and .q, I)oth with boolea.I/ wdues a.ll(I ['lll'l,[lel'lllOF(~ that the va.hies of f aild g iil/lSl al~r(!e, [> is the disjunct]w! I"(111.
+0	if a,u object is o[ type l then it deserw:s f with va.lue -I- and q with wdue +, or it deserw.~s f with va.lue a.nd 9 with value - To 0ncode [3> first iul,rodLiCe sul/l.yltes , t ~ ;+l.ll([ l" of I (1 E I/, 1.##), O11(!
+0	SUl)tyl)e ['()l' ea,ch disjuuct iu the cousequenl, of'p.
+0	Then encode the ]'ea.tli['e/wthl~.~ <'on(!il.illliS in l, he [irst disjunct ILy putthlg Approp(t', ./) :: ~-a,nd Approp(//~ q) -+, and encode the I'eature/value conditions in the second dis-juu(:t by putting Approp(t',f) = -.
+0	and Approp(t',g) = . .'2 This a pproa,ch Ina, kes two inll)ort;a, lll, closed-world type assumptious a, bouL (.he types tli~d; Slll)SlllIle 11o ogher types (hellCe- forth species), l:irst, the p;i.rtition conditiOII states tha.t for each type t, if a.n object is (31' type t theu the object is of ex-ax-I.ly o11(2 species subsulned by t. Second, the all-or-nothing cclndition sta, tes that 1'(31' each species ,q a.itd fea.ture f, either every el" IIO ol>,iecl, or species s deserves feature .#c.3 All a.l)ltroltriM,eliess [orli+ia.lisill sllc]l a.s ALl:, ([2], [3])ti,;t.l. does not uieet both c.ouditions llla.y llOt; ]lroper[y el|cOde a, disjull('- five l"(:l/.
+0	For exalnple, consider disjunctive I"CI{.
+0	p. An a.I)prl;)pria.l, elleSS [ornia.l--iSlli I/lily l/O( properly encode 1,hi~t t / a.lld t" i'el)rt,selil, MI a.lid oilly the disjuncl, s ill the COll.qeqll(Hlt or [i wiLhout the i)a.rl,ition COll-d]tion.
+0	<till a.llln'ol)riill.eness [orlila.liSlll llia,y IIOl.
+0	llrOl)erly encode the [t~ii.l.llle/vii.hle (:(lll-<liiriOii: deinanded liy em'h disjuncl, hi the COli.~t!qllelil.
+0	o| p wilhoul, the a.i[-Ol'-liot;hilig c(m(til.ion.
+0	As indicat.ed a.bove, AI, I.; is iLIi exa.tlli)le o| it.
+0	f(n'liialiSlU I.ha.l, does it(it ineel; llol;h o| 1.hese closed world aS,glllnlil,iOli.g. In AI+E :-/.
+0	['eli.l.tlr(~ st.i'llCtlile i.<4 won typed ifl' for ea.ch arc iit the te:+d.ure sI.l'tlCl;tlr0, if' 1,he SOtll'('(~ node is labelled wil.h type /., the targel; node is lallelled with 1;ype l / a.lld the il.i'c is IMlelled with [ea.tlll'(~ f 1,lien Approp(/.> .f) [ l/.
+0	Furl.her|note> a ['eal, urt~ strut(tire is >l'lds exanll)h: I:(JR is, for eXlmsil.ory l)nrl)oses, quilt simph'.
+0	"l'hc prolileni o[ c.xpr('.sshig F(Jl/'s, however, is a l'Cal Iiuguisl.ic i)rol)lcin.
+0	As noted I)y Copcstakc.
+0	ct al. [4], it.
+0	was inipossihlc I.o c.xpress CV('II Ihc .~ilii[)]oM.
+0	forilis o[ l"(JRs in l.hc.ii7 ctciidcd VCISiOII (it' AI.E. '['hc basic principle of expressing l"Clls also ex lends Io I"(',[(s iuvolviug longer palhs.
+0	For example, to (:llSllt't: thai.
+0	for the type l, I.he path (fg) lakes a vahie subsuuied I)y .% one nlust tirst hll, ro ducc the chaiu Approp(/, f) = .,, Approp('a, g) = .~.
+0	Silch ilil.crlllCdialc I.'~'l)lts COllid ll(!
+0	hll.rodllced a.<-; part o[ a (onilli[al.iou sl.age..
+0	4 Nob: I.hal.
+0	Ihesc cl,>s<,d world assulnplions art' explicitly made in Pollard ,t,.
+0	Sag (rorthcoming) [14]..
+0	well-typable iff the feature structure subsumes a well-typed feature structure, in ALl.:, type infereneing is employed to ensure that all feature structures are well-typable--in fact, all feature structures are well typed.
+0	Unfortunately, well-typability is not sufficient to ensure that disjunctive FCRs are satisfied.
+0	Consider, For exam- pie, our encoding of the disjunctive FCR p and suppose that 99 is the fe, ature structure t[f : +,9 : -].
+0	90 is well-typed, and hence trivially well-typable.
+0	Unfortunately, 99 vb elates the encoded disjunctive FCR p. The only way one could interpret ~ as well-formed.
+0	By contrast, the Troll system described in this paper has an etfeetive algorithm f<>r deciding well-formedness, which is based on the idea of efficiently representing disjunctive possibilities within the feature structure, Call a well-typed feature structure in which all nodes are labelled with species a resolved feature structure and call a set of resolved feature structures that have the same underlying graph (that is, they differ only in their node labellings) a disjunctive resolved feature structure.
+0	We write fS, ~vf8 and 'D~.)c$ for the collections of feature structures, resolved feature structures and disjunctive resolved feature structures respectively.
+0	Say that F'E RFS is a resolvant of F E FS iff F and F' have the same underlying graph and F subsumes F'.
+1	Let type resolution be the total function R:->DRFS such that R(F) is the set of all resolvants of F. Guided by the partition and all-or-nothing conditions, King [13] has formulated a semantics of feature structures and developed a notion of a satisfiable feature structure such that F E FS is satisfiable iff R(F) 0.
+0	T$ is satisfial~le if[' 7~(F) 7 ~ (7).
+1	C, erdemann ,% King [8] have also shown that a feature strtlcture l]leets all encoded FCRs ifl" the feature structure is satisfiable.
+1	The Troll system, which is based on this idea, effectively inqflements type resolution.
+0	Why does type resohttion succeed where.
+0	type inferencing fails?
+0	Consider again the encoding of p and the feature structure 9~.
+0	Loosely speaking, the appropriateness sl)eeifieations for type t encode the part of p that sta, tes that an object of tyl)e t deserves features f and g, both with boolean vahles.
+0	However, the appropriateness specifications for the speci- ate sul)types t' and t" of type t encode the part of p that states that these val-lies lnust agree.
+0	Well-typability only considers species if forced to.
+0	In the case of ~, well-typability can be estahlished by consklering type t alone, without the l)artition condition forcing one to find a well-typed species subsumed hy t. Consequently, well-tyl)ahility overlooks the part offl exehisively encoded by the ai)propriateness specifications for t' and t".
+0	Type resolution, on the other hand, always considers species.
+0	Thus, type resolving 9o cannot overlook the part of p exclusively encoded by tile appropriateness specifications for t' and t'.
+0	APPROPRIATENES S CONDITIONS A very important property of the class of DRFS is that they are closed under unification, i.e., if F and F'E DRFS then F U F' E DRFS.4 Given this property, it would in principle he possible to use the disjunctive resolved feature structures in an implementation without any additional type inferencing procedure to maintain satisfiability.
+0	It would, of course, not be very efficient to work with such large disjunctions of feature structures.
+0	4In fa.ct., it ~:~rl~ I)~ SI~OW ~ that if t" a.nd 1'" 6 fS then "R ( F) tJ 1"(1"') = "R ( F tO F').
+0	Uni/ication of sets of fca.ture structures is defined here ill the standard way: S t2 ,S" = {1"[ I"' 6 S and l"" G S" and 1" = 1"' H 1""}.
+0	(!rty a.llows a. disjultctivo fesolv(,d featur(, structti re to I)e r(;l)rosetd,(~d more et[icieutly a,s ~t sitlgle untyl)(~d l'eatur(' st.l'll(:l.llfe plus a, sel; of d(;pondlmt node la.h(~liugs, which ca.n be further (;oml)a,(:t(~d using mi, Nie(l dis.
+0	junction a.s in (',(~rdemann [(i], I)i'~['re t(: Fo]' exanH)le , SUl)l)OS(~ \v(~ I,,yl)(~ r(~solvc the [ea, l, urc st, ructure t[,f ; bool,fl; bool] using our encoding of p.
+0	()he can (rosily see tha.t this fea.tur(~ strut:fur(, has only two I'e solwl, nts, which ca, n I)e colla.ps(~d iuto one fea,1;ure strlll:ttlro with llallV2d d]sjunci.ion a,s shown below: f:k , : :> f: (I t -) II'll;1} ["'"' ] 0:t-LU: J ,u: (I t ) We now ha,vo a, [;(mSolml)ly COml)a(:l l'q)-resentaJ;ion hi which t.ho l"(il{, ha.s lie(Hi tl';tllsl;I,t(~([ iul,o a. Ila, ill(!(I ([iS.]llll(:l.ioli.
+0	Ih,w O,V(H'> (Hie should note tha, t fills dis.iun(: l;ion is only l)l'eSeUl; b(~(:aats(~ the ['oaJ, tli'O~i .f a,]l(l g ha>l)l)en 1:o I)o Fir(~s(HIt.
+0	Tilt!S(!
+0	I(,a tures would .eed l;o Im l)res(mt il w(~ wtwe enforchl<ej (Jaxpcnl,(H"s [:7] lcil, al w(ql i.yl)iug r(xluiroti]oilt ~ whhth ,qa,y's 1.1ial [(!al:ilr('s I. lial a,l:e a.llowed ilillSt 1)o pres,.ml., lllil.
+0	Iol.a[ well I.yping is, hi fax:t> incoinl)a.lib]e ;villi lype resolul, ioli~ since I;hore lilil$' w(ql I)o all inli llit;(~ seL of tota, lly w(,ll iyl)od I'esolvalil.s of ;1 l'(;a, Lllr(J st]'llcttir('~, For (~xa.llipi(~, a.ll illi(lei'.- Sl)ocifiod list stl'u('tlir(' couhl be iT(~S()/v0(I 1.o ;~ list of length (L a. list of h:ngl.h 1, el.c, ,qhlce I, ota.I well I,yliin g is liOt i'(!quir(!([, we lm~y i~s well a.ctiwqy un[il[ r0(lulid;lnt ['0a, tlires, 5 ill this (!Xalli[)l(!> i[ t, li(' f ail(l (7 fo.a, tllrOS ;~l'e reliiovod, we a,lO lell wil, h lh(, simple, disjunction {if,/'~}: which is (!quiv- a,lent, to l;]le or(lillaJ'y l,Yl)(' l.(; Thus, iu lliis ca, so> ]lO (lisjtulcl, ion a.t all ix rc!(llliro(l 10 (!11" force the I"CIL All th',tt is requirc(I is tim ~qntuil, ively, [eat, ui'cs arc rodundaui it Ilwir val llCS art'.
+0	eul,h'cl 5 predictaldc fl'oui ihc approluiaic .ross Sl>eCificatim,..%'c GStz [1)], (',cr,lemam, [7] k,r ;I. IIlOl;('.
+0	[HXX:iHCforUllllalioii.
+0	[n this casc, il.
+0	would also have b(:ml l)~>,~iblc to unlill Lhc oi'i<eiuai teal, life Sll'tl<ltllc I,.I.ie I*' solviug.
+0	/Snforl, unai,e, ly, llmvcvcr, this i~; l.>i ;ihvay~.
+0	the (:asc, as C;lll |)(!
+0	S(!t'II in the [ollowiug (!Xalll])lC: t{j: +] :> {C/: +]} ~ ~'.
+0	asSUml)tion tha.t t will only be ext(mded I)y unil'ying il with a.lmther (t;Oml)a.ct(~d) m(mll)(!r o[' "l)']?.Jr,_c,.
+0	This, h.w(wer, wa.s a. simple ca.se iu which a.I1 of the named dis.jun(:tion could ho removed.
+0	It would not lmve I)('en i)os sihle to relnov(' tim fea.tur('s f ~tll(I g if thest~ 17,atu['es had I)oen involved iu re(m-tranci(+s of i[' tlt(,se lim.tures ha.d ha.d t:om- i)h+x va.lu('s, lu gt+tlera.I, howover, our eXl)e- ri(!ll(:(~ ha,s I)(~(ql that, eV(;l! wil, li very (:()tit pl('x type hi(~ra, rchi(~s a.nd |'(m, tur(; SLI'UC-l, lll'eS [()1" liPS(i, very i'ow named (lisjunc-lions a, re introdu('e(l. 7 q'hus~ uuilica.1;ion is e;(merally uo more (~xp(msive tha.n unifica.- li,:)H with unlylmd l(mt.ur(~ sl.fu(:l.ur('s.
+0	\% havc~ sh,:Y, vu in this i~al),:~r tha.t the kind of consl raints ,:~Xl)r.t~ssihlo Ity api)Vol)rh~,l;or.~ss c~mdit.ions call he imlflemc'.nted iN a i.'actical .,.D, sle]n e,ul)loyinK typ,M featu r,:'~ st.ru(:t.uf(,s and utdlica.Lion a.s I.he I:,ritna.ry Ol)(U'a,t, ic:,n on t(>;t,l, ur<+ ,'-;t, ruct, ure~.
+0	Ilut what.
+0	Of IIlOl'(' COIII[)I(~N l;yp(~ CC'IIH|,F.~LilI|,,q it~v'.)l',.' h~y; r(~enl;ram:ies': [ntro(IL~ciug reeJH.ra.ncies illl.
+0	,::<rest ralid.s allows E.' the F,O~sihillty of d(~liNiu/,, recursivc l.yl),:~s ~ such a.s the (leli nitkm of append in [I].
+0	(;lea['ly the re ~olv;-~nl.~, o[ such a. recursiv(~ l.yl)(', could Not I)(~ l,reCOmlfiled a.s r,.~quiI'oxl in Troll.
+0	Oue might, uew'rtholoss, considm' a l- [OWil]l[ f('(Hl(, f a, ll('y- ('OIls t f a hI| S oll llollrecursiv(qy defiltcd l.ypcs.
+0	A ])ro/)leul still arises; nantcly, il lhe l'eSo[va.itts of a Frail, till't1 .qll'tlCI411"(~ ill(:ludcd sonic with a pa.rticu lar r(~onll'all(:y a.nd s()Tn(~ \viLh(',ul, then the (:,.)mliti()ll iliad, a.II resc)lva.uts ha.v(~ th,:~ same shal)(~ would m)lon~e[' hold.
+0	()ue v.,ottkl l.her(q'or,.~ no(~(l i.o eml)loy a moue COml)l(,x vorsion .r ,a.med (lis.it, f,t:tio, (Ill], [12], tit)I).
+0	It.
+0	ig (i,.L(~sti,.malfl(~ wh('thef such a.d ditional (:()mpl(~xit.y would I)e justified to 'Our CXl)ericl~(:c is derived l,'imarily flora test-i.I" Ihc 'l'loll system (m a tat, her lar<e,e e, ramul;G for (',(!l>lll;lll imfiial vcrh I>lHases, which was wiit-t('n I)y I'hhard Ilillrichs a.d Tsum:ko Na, kazawa aud iinl)lclncut,cd by I)clmar McuH_:J's.
+0	handle this limited class of reentrancy- constraints.
+0	It seems then, that the class of constraints that can be expressed by appropriateness conditions corresponds closely to the class of constraints that can be efficiently preeompiled.
+0	We take this as a justification for appropriateness formalisms in general.
+0	It makes sense to ~d)straet out the efficiently processable constraints and then allow another mechalfiSm, such as attachments of definite clauses, to express more complex constraints.

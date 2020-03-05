@@ -1,0 +1,338 @@
+0	A Bayesian hybrid method for context-sensitive spelling correction
+0	Two classes of methods have been shown to be useful for resolving lexical ambiguity.
+0	The first relies on the presence of particular words within some distance of the ambiguous target word; the second uses the pattern of words and part-of-speech tags around the target word.
+0	These methods have complementary coverage: the former captures the lexical "atmosphere" (discourse topic, tense, etc.), while the latter captures local syntax.
+0	Yarowsky has exploited this complementarity by combining the two methods using decision lists.
+0	The idea is to pool the evidence provided by the component methods, and to then solve a target problem by applying the single strongest piece of evidence, whatever type it happens to be.
+0	This paper takes Yarowsky's work as a starting point, applying decision lists to the problem of context-sensitive spelling correction.
+0	Decision lists are found, by and large, to outperform either component method.
+0	However, it is found that further improvements can be obtained by taking into account not just the single strongest piece of evidence, but all the available evidence.
+0	A new hybrid method, based on Bayesian classifiers, is presented for doing this, and its performance improvements are demonstrated.
+0	Two classes of methods have been shown useful for resolving lexical ambiguity.
+0	The first tests for the presence of particular context words within a certain distance of the ambiguous target word.
+0	The second tests for collocations - patterns of words and part-of-speech tags around the target word.
+0	The context-word and collocation methods have complementary coverage: the former captures the lexical "atmosphere" (discourse topic, tense, etc.), while the latter captures local syntax.
+0	Yarowsky [1994] has exploited this complementarity by combining the two methods using decision lists.
+0	The idea is to pool the evidence provided by the component methods, and to then solve a target problem by applying the single strongest piece of evidence, whatever type it happens to be.
+0	Yarowsky applied his method to the task of restoring missing accents in Spanish and French, and found that it outperformed both the method based on context words, and one based on local syntax.
+0	This paper takes Yarowsky's method as a starting point, and hypothesizes that further improvements can be obtained by taking into account not only the single strongest piece of evidence, but all the available evidence.
+0	A method is presented for doing this, based on Bayesian classifiers.
+0	The work reported here was applied not to accent restoration, but to a related lexical disam­ biguation task: context-sensitive spelling correction.
+0	The task is to fix spelling errors that happen to result in valid words in the lexicon; for example: I'd like the chocolate cake for *desert.
+0	where dessert was misspelled as desert.
+0	This goes beyond the capabilities of conventional spell checkers, which can only detect errors that result in non-words.
+0	We start by applying a very simple method to the task, to serve as a baseline for comparison with the other methods.
+0	\Ve then apply each of the two component methods mentioned above­ context words and collocations.
+1	\Ve try two ways of combining these components: decision lists, and Bayesian classifiers.
+0	\Ve evaluate the above methods by comparing them with an alternative approach to spelling correction based on part-of-speech trigrams.
+0	The sections below discuss the task of context-sensitive spelling correction, the five methods we tried for the task (baseline, two component methods, and two hybrid methods), and the evaluation.
+0	The final section draws some conclusions.
+0	Context-sensitive spelling correction is the problem of correcting spelling errors that result in valid words in the lexicon.
+0	Such errors can arise for a variety of reasons, including typos (e.g., out for our), homonym confusions (there for their), and usage errors (between for among).
+0	These errors are not detected by conventional spell checkers, as they only notice errors resulting in non-words.
+1	\Ve treat context-sensitive spelling correction as a task of word disambiguation.
+0	The ambiguity among words is modelled by confusion sets.
+0	A confusion set C = { w 1, ...,wn} means that each word Wi in the set is ambiguous with each other word in the set.
+0	Thus if C = {deser·t, desser·t}, then when the spelling-correction program sees an occurrence of either desert or dessert in the target document, it takes it to be ambiguous between desert and dessert, and tries to infer from the context which of the two it should be.
+0	This treatment requires a collection of confusion sets to start with.
+0	There are several ways to obtain such a collection.
+0	One is based on finding words in the dictionary that are one typo away from each other [Mays et al., 1991).1 Another finds words that have the same or similar pronunciations.
+0	Since this was not the focus of the work reported here, we simply took (most of) our confusion sets from the list of "\Vords Commonly Confused" in the back of the Random House unabridged dictionary [Fiexner, 1983].
+0	A final point concerns the two types of errors a spelling-correction program can make: false negatives (complaining about a correct word), and false positives (failing to notice an error).
+0	We will make the simplifying assumption that both kinds of errors are equally bad.
+0	In practice, however, false negatives are much worse, as users get irritated by programs that badger them with bogus complaints.
+0	However, given the probabilistic nature of the methods that will be presented below, it would not be hard to modify them to take this into account.
+0	We would merely set a confidence threshold, and report a suggested correction only if the probability of the suggested word exceeds the probability of the user's original spelling by at least the threshold amount.
+0	The reason this was not done in the work reported here is that setting this confidence threshold involves a certain subjective factor (which depends on the user's "irritability threshold").
+0	Our simplifying assumption allows us to measure performance objectively, by the single parameter of prediction accuracy.
+0	1Constructing confusion sets in this way requires assigning each word in the lexicon its own confusion set.
+0	For instance, cat might have the confusion set {lwf,car·, ...
+0	}, hat might have {cat,had, ...
+0	}, and so on.
+0	We cannot use the symmetric confusion sets that we have adopted - where every word in the set is confusable with every other one - because the "confusable" relation is no longer transitive.
+0	This section presents a. progression of five methods for context-sensitive spelling correction: Baseline An indicator of "minimal competency" for comparison with the other methods Context words Tests for particular words within ±k words of the ambiguous target word Collocations Tests for syntactic patterns around the ambiguous target word Decision lists Combines context words and collocations via.
+0	decision lists Bayesian classifiers Combines context words and collocations via Bayesian classifiers.
+0	Each method will be described in terms of its operation on a single confusion set C = {Wt, ...
+0	, wn}; that is, we will say how the method disambiguates occurrences of words w1 through Wn from the context.
+0	The methods handle multiple confusion sets by applying the same technique to each confusion set independently.
+0	Each method involves a training phase and a test phase.
+0	The performance figures given below are based on training each method on the 1-million-word Brown corpus [Kucera.
+0	and Francis, 1967] and testing it on a 3/4-million-word corpus of Wall Street Journal text [Marcus et al., 1993].
+0	3.1 Baseline method.
+0	The baseline method disambiguates words w1 through Wn by simply ignoring the context, and always guessing that the word should be whichever Wi occurred most often in the training corpus.
+0	For instance, if C = {desert, rlessert}, and rlesert occurred more often than dessert in the training corpus, then the method will predict that every occurrence of desert or dessert in the test corpus should be changed to (o·r left as) desert.
+0	Table 1 shows the performance of the baseline method for 18 confusion sets.
+0	This collection of confusion sets will be used for evaluating the methods throughout the paper.
+0	Each line of the table gives the results for one confusion set: the words in the confusion set; the number of instances of any word in the confusion set in the training corpus and in the test corpus; the word in the confusion set that occurred most often in the training corpus; and the prediction accuracy of the baseline method for the test corpus.
+0	Prediction accuracy is the number of times the correct word was predicted, divided by the total number of test cases.
+0	For example, the members of the confusion set {I, me} occurred 840 times in the test corpus, the breakdown being 744 I and 96 me. The baseline method predicted I every time, and thus was right 744 times, for a score of 744/840 = 0.886.
+0	Essentially the baseline method measures how accurately one can predict words using just their prior probabilities.
+0	This provides a lower bound on the performance we would expect from the other methods, which use more than just the priors.
+0	3.2 Component method 1: Context words.
+0	One clue about the identity of an ambiguous target word comes from the words around it.
+0	For instance, if the target word is ambiguous between desert and dessert, and we see words like arid, sand, and sun nearby, this suggests that the target word should be desert.
+0	On the other hand, words such as chocolate and delicious in the context imply desser·t. This observation is the basis for the method of context words.
+0	The idea is that each word Wi in the confusion set will have a characteristic distribution of words that occur in its context; thus to classify a.n ambiguous target word, we look at the set of words around it and see which w; 's distribution they most closely follow.
+0	C on fu si on se t No.
+0	of No.
+0	of t r a i n i n g t e s t c a s e s c a s e s M os t Baseline f r e q u e n t w o r d w h et h e r, w e at h er 3 3 1 2 4 5 I, m e 61 2.
+0	5 84 0 its , it' s 19 .5 1 3.
+0	57 5 p as t, pa ss ed 38 .5 39 7 th a n, th en 29 49 16 59 be in g, be gi n 72 7 44 9 ef fe ct, af fe ct 22 8 16 2 yo ur , yo u'r e 10 47 21 2 n u m be r, a m o u nt 58 8 42 9 co un cil , co un se l 82 8 3 ris e, rai se 13 9 30 1 be t w ee n, a m on g 10 03 73 0 le d, le ad 22 6 21 9 ex ce pt , ac ce pt 23 2 95 pe ac e, pi ec e 31 0 6 1 th er e, th ei r, th e y' re 50 26 21 87 pr in ci pl e, pr in ci pa l 18 4 69 si gh t, sit e, cit e 14 9 44 w h e t h e r 0 . 9 2 2 I 0 . 8 8 6 i t s 0 . 8 6 3 p a s t 0 . 8 6 1 t h a n 0 . 8 0 7 b e i n g 0 . 7 8 0 e f f e c t 0 . 7 4 1 y o u r 0 . 7 2 6 n u m b e r 0 . 6 2 7 c o u n c i l 0 . 6 1 4 n s e 0 . 5 7 5 b e t w e e n 0 . 5 3 8 l e d 0 . 5 3 0 e x c e p t 0 . 4 4 2 p e a c e 0 . 3 9 3 t h e r e 0 . 3 0 6 p r i n c i p l e 0 . 2 9 0 s i g h t 0 . 1 1 4 Table 1: Performance of the baseline method for 18 confusion sets.
+0	The "Most frequent word" column gives the word in the confusion set that occurred most frequently in the training corpus.
+0	(In subsequent tables, confusion sets will be referred to by their most frequent word.)
+0	The "Baseline" column gives the prediction accuracy of the baseline system on the test corpus.
+0	Following previous work [Gale et al., 1994], we formulate the method in a Bayesian framework.
+0	The task is to pick the word Wi that is most probable, given the context words Cj observed within a ±k-word window of the target word.
+0	The probability for each Wi is calculated using Bayes' rule: As it stands, the likelihood term, p( c_k.
+0	, c_ 1, c1, ...
+0	, cklwi), is difficult to estimate from training data - we would have to count situations in which the entire context was previously observed around word Wi, which raises a. severe sparse-data problem.
+0	Instead, therefore, we assume that the presence of one word in the context is independent of the presence of any other word.
+0	This lets us decompose the likelihood into a product: II jE-k,...,-l,l,...,k Gale et al. [1994] provide evidence that this is in fact a reasonable approximation.
+0	We still have the problem, however, of estimating the individual p(cilwi) probabilities from our training corpus.
+0	The straightforward way would be to use a. maximum likelihood estimate - we would count Af;, the total number of occurrences of w; in the training corpus, and m;, the number of such occurrences for which Cj occurred within ±k words, and we would then take the ratio miflvf;.2 Unfortunately, we may not have enough training data to get an accurate estimate this way.
+0	Gale et al. [1994] address this problem by interpolating between two maximum-likelihood estimates: one of p(cjlw;), and one of p(cj).
+0	The former measures the desired quantity, but is subject to inaccuracy due to sparse data; the latter provides a robust estimate, but of a potentially irrelevant quantity.
+0	Gale et al. interpolate between the two so as to minimize the overall inaccuracy.
+0	We have pursued an alternative approach to the problem of estimating the likelihood terms.
+0	We start with the observation that there is no need to use every word in the ±k-word window to discriminate among the words in the confusion set.
+0	If we do not have enough training data for a given word c to accurately estimate p(ciw;) for all w;, then we simply disregard c, and base our discrimination on other, more reliable evidence.
+0	We implement this by introducing a "minimum occurrences" threshold, Tmin.
+0	It is currently set to 10.
+0	We then ignore a context word c if: L m; < Tmin or L (Af;- m;) < Tmin l i n l5i n where m; and A{ are defined as above.
+0	In other words, c is ignored if it practically never occurs within the context of any w;, or if it practically always occurs within the context of every w;.
+0	In the former case, we have insufficient data to measure its presence; in the latter, its absence.
+0	Besides the reason of insufficient data, a second reason to ignore a context word is if it does not help discriminate among the words in the confusion set.
+0	For instance, if we are trying to decide between I and me, then the presence of the in the context probably does not help.
+0	By ignoring such words, we eliminate a source of noise in our discrimination procedure, as well as reducing storage requirements and run time.
+0	To determine whether a context word cis a useful discriminator, we run a chi-square test [Fleiss, 1981] to check for an association between the presence of c and the choice of word in the confusion set.
+0	If the observed association is not judged to be significant,3 then c is discarded.
+0	The significance level is currently set to 0.05.
+0	Figure 1 pulls together the points of the preceding discussion into an outline of the method of context words.
+0	In the training phase, it identifies a list of context words that are useful for discriminating among the words in the confusion set.
+0	At run time, it estimates the probability of each word in the confusion set.
+0	It starts with the prior probabilities, and multiplies them by the likelihood of each context word from its list that appears in the ±k-word window of the target word.
+0	Finally, it selects the word in the confusion set with the greatest probability.
+0	The main parameter to tune for the method of context words is k, the half-width of the context window.
+0	Previous work [Yarowsky, 1994] shows that sma.ller values of k (3 or 4) work well for resolving local syntactic ambiguities, while larger values (20 to 50) are suitable for resolving semantic ambiguities.
+0	\Ve tried the values 3, 6, 12, and 24 on some practice confusion sets (not shown here), and found that k = 3 generally did best, indicating that most of the action, for our task and confusion sets, comes from local syntax.
+0	In the rest of this paper, this value of k will be used.
+0	2 We are interpreting the condition "c. occurs within a ±k-word window of w;" as a binary feature - either it happens, or it does not.
+0	This allows us to handle context words in the same Bayesian framework as will be used later for other binary features (see Section 3.3).
+0	A more conventional interpretation is to take into account the number of occurrences of each Cj within the ±k-word window, and to estimate p(cilw;) accordingly.
+0	However, either interpretation is valid, as long as it is applied consistently - that is, both when estimating the likelihoods from training data, and when classifying test cases.
+0	3 An association is significant if the probability that it occurred by chance is low.
+0	This is not a statement about.
+0	the strength of the association.
+0	Even a wea.k association may be judged significant if there are enough da.ta to support it.
+0	Measures of the strength of association will be discussed in Section 3.4.
+0	Training phase (1) Propose all words a.s candidate context words.
+0	(2) Count occurrences of each candidate context word in the training corpus.
+0	(3) Prune context words that have insufficient data or are uninformative discriminators.
+0	(4) Store the remaining context words (and their associated statistics) for use at run time.
+0	Run time (1) Initialize the probability for each word in the confusion set to its prior probability.
+0	(2) Go through the list of context words that was saved during training.
+0	For each context word that appears in the context of the ambiguous target word, update the probabilities.
+0	(3) Choose the word in the confusion set with the highest probability.
+0	Figure 1: Outline of the method of context words.
+0	Table 2 shows the effect of varying k for our usual collection of confusion sets.
+0	It can be seen that performance generally degrades as k increases.
+0	The reason is that the method starts picking up spurious correlations in the training corpus.
+0	Table 4 gives some examples of the context words learned for the confusion set {peace, piece}, with k = 24.
+0	The context words co1·ps, united, nations, etc., all imply peace, and appear to be plausible (although united and nations are a counterexample to our earlier assumption of independence).
+0	On the other hand, consider the context word how, which allegedly also implies peace.
+0	If we look back at the training corpus for the supporting data for this word, we find excerpts such a.s: But oh, how I do sometimes need just a moment of rest, and peace ..
+0	No ma.tter how earnest is our quest for guaranteed peace ..
+0	How best to destroy your peace ? There does not seem to be a necessary connection here between how and peace; the correlation is probably spurious.
+0	Although we are using a chi-square test expressly to filter out such spurious correlations, we can only expect the test to catch 95% of them (given that the significance level was set to 0.05).
+0	As mentioned above, most of the legitimate context words show up for small k; thus as k gets large, the limited number of legitimate context words gets overwhelmed by the 5% of the spurious correlations that make it through our filter.
+0	3.3 Component method 2: Collocations.
+0	The method of context words is good at capturing generalities that depend on the presence of nearby words, but not their order.
+0	\Vhen order matters, other more syntax-based methods, such as collocations and trigrams, are appropriate.
+0	In the work reported here, the method of collocations was used to capture order dependencies.
+0	A collocation expresses a pattern of syntactic elements around the target word.
+0	We allow two types of syntactic elements: words, and part-of-speech tags.
+0	Going back to the {desert, dessert} example, a collocation that would imply desert might be: PREP the C on fu si on se t B a s e l i n e C w or ds Cwords Cwords Cwords ± 3 ± 6 ± 1 2 ± 2 4 w he th er I i t s p a s t t h a n b e i n g e f f e c t y o u r n u m b e r c o u n c i l r i s e b e t w e e n l e d e x c e p t p e a c e t h e r e pr in ci pl e si gh t 0 . 9 2 2 0 . 8 8 6 0 . 8 6 3 0 . 8 6 1 0 . 8 0 7 0 . 7 8 0 0 . 7 4 1 0 . 7 2 6 0 . 6 2 7 0 . 6 1 4 0 . . 5 7 5 0 . 5 3 8 0 . 5 3 0 0 . 4 4 2 0 . 3 9 3 0 . 3 0 6 0 . 2 9 0 0 . 1 1 4 0 . 9 0 2 0.922 0.927 0.922 0 . 9 1 0 . 8 6 2 0.795 0.743 0.702 0 . 8 6 1 0.849 0.801 0.743 0 . 9 3 1 0.901 0.896 0.855 0 . 7 9 1 0.795 0.793 0.755 0 . 7 4 7 0.741 0.759 0.716 0 . 8 1 6 0.783 0.774 0.736 0 . 6 4 6 0.622 0.636 0.639 0 . 6 3 9 0.614 0.602 0.614 0 ..
+0	5 7 5 0.575 0.585 0.498 0 . 7 5 9 0.697 0.671 0.586 0 . 5 3 0 0.530 0.521 0.557 0 . 6 9 5 0.526 0.516 0.558 0 . 7 5 4 0.705 0..574 0.574 0 . 7 2 6 0.623 0.557 0.466 0 . 2 9 0 0.290 0.290 0.435 0 . 4 5 5 0.2.50 0.364 0.318 A vg no.
+0	of contex t words 2 7 . 9 36.9 55.9 92.9 Table 2: Performance of the method of context words as a function of k, the half-width of the context window.
+0	The bottom line of the table shows the number of context words learned, averaged over all confusion sets, also as a function of k. This collocation would match the sentences: Travelers entering from the desert were confounded ...
+0	along with some guerrilla fighting in the desert.
+0	two ladies who lay pinkly nude beside him in the desert Matching part-of-speech tags (here, PREP) against the sentence is done by first tagging each word in the sentence with its set of possible part-of-speech tags, obtained from a dictionary.
+0	For instance, walk has the ta.g set {Ns, v}, corresponding to its use as a singular noun and as a verb.4 For a tag to match a word, the ta.g must be a member of the word's tag set.
+0	The reason we use tag sets, instead of running a tagger on the sentence to produce unique tags, is that taggers need to look at all words in the sentence, which is impossible when the target word is taken to be ambiguous (but see the trigram method in Section 4 ).
+0	The method of collocations was implemented in much the same way as the method of context words.
+0	The idea is to discriminate among the words Wi in the confusion set by identifying the collocations that tend to occur around each w;.
+0	An ambiguous target word is then classified by finding all collocations that match its context.
+0	Each collocation provides some degree of evidence 4 0ur tag inventory contains 40 tags, and includes the usual categories for determiners, nouns, verbs, modals, etc., a few specialized tags (for be, have, and do), and a dozen compound tags (such as V+PRO for let's).
+0	45 for each word in the confusion set.
+0	This evidence is combined using Bayes' rule.
+0	In the end, the Wi with the highest probability, given the evidence, is selected.
+0	A new complication arises for collocations, however, in that collocations, unlike context words, cannot be assumed independent.
+0	Consider, for example, the following collocations for desert: PREP the in the the These collocations are highly interdependent- we will say they conflict.
+0	To deal with this problem, we invoke our earlier observation that there is no need to use all the evidence.
+0	If two pieces of evidence conflict, we simply eliminate one of them, and base our decision on the rest of the evidence.
+0	We identify conflicts by the heuristic that two collocations conflict iff they overlap.
+0	The overlapping portion is the factor they have in common, and thus represents their lack of independence.
+0	This is only a heuristic because we could imagine collocations that do not overlap, but still conflict.
+0	Note, incidentally, that there can be at most two non-conflicting collocations for any decision - one matching on the left-hand side of the target word, and one on the right.
+0	Having said that we resolve conflicts between two collocations by eliminating one of them, we still need to specify which one.
+0	Our approach is to assign each one a strength, just as Yarowsky [1994] does in his hybrid method, and to eliminate the one with the lower strength.
+0	This preserves the strongest non-conflicting evidence as the basis for our answer.
+0	The strength of a collocation reflects its reliability for decision-making; a further discussion of strength is deferred to Section 3.4.
+0	Figure 2 ties together the preceding discussion into an outline of the method of collocations.
+0	The method is described in terms of "features" rather than "collocations" to reflect its full generality; the features could be context words a.s well as collocations.
+0	In fact, the method subsumes the method of context words -it does everything that method does, and resolves conflicts among its features as well.
+0	To facilitate the conflict resolution, it sorts the features by decreasing strength.
+0	Like the method of context words, the method of collocations has one main parameter to tune: f, the maximum number of syntactic elements in a collocation.
+0	Since the number of collocations grows exponentially with e, it was only practical to vary f from 1 to 3.
+0	We tried this on some practice confusion sets, and found that a.ll values of£ gave roughly comparable performance.
+0	We selected f = 2 to use from here on, as a compromise between reducing the expressive power of collocations (with e = 1) and incurring a high computational cost (with e = 3).
+0	Table 3 shows the results of varying£ for the usual confusion sets.
+0	There is no clear winner; each value of£ did best for certain confusion sets.
+0	Table 5 gives examples of the collocations learned for {peace, piece} with£= 2.
+0	A good deal of redundancy can be seen among the collocations.
+0	There is also some redundancy between the collocations and the context words of the previous section (e.g., for corps).
+0	Many of the collocations a.t the end of the list appear to be overgeneral and irrelevant.
+0	3.4 Hybrid method 1: Decision lists.
+0	Yarowsky [1994] pointed out the complementarity between context words and collocations: context words pick up those generalities that are best expressed in an order-independent way, while collo­ cations capture drder-dependent generalities.
+0	Ya.rowsky proposed decision lists as a way to get the best of both methods.
+0	The idea is to make one big list of all features - in this case, context words and collocations.
+0	The features are sorted in order of decreasing strength, where the strength of a feature reflects its reliability for decision-making.
+0	An ambiguous target word is then classified by running down the list and matching each feature against the target context.
+0	The first feature that 46 Training phase (1) (2) (3) (3.5) (4) Propose all possible features as candidat e features.
+0	Count occurren ces of each candidat e feature in the training corpus.
+0	P r u n e f e a t u r e s t h a t h a v e i n s u f f i c i e n t d a t a . o r a r e u n i n f o r m a t i v e d i s c r i m i n a t o r s . S o r t t h e r e m a i n i n g f e a t u r e s i n o r d e r o f d e c r e a s i n g s t r e n g t h . Store the list of features (and their associat ed statistics ) for use at run time.
+0	Run time (1) Initialize the probability for each word in the confusion set to its prior probability.
+0	(2) Go through the sorted list of features that was saved during training.
+0	For each feature that matches the context of the ambiguous target word, and does not conflict with a feature accepted previously, update the probabilities.
+0	(3) Choose the word in the confusion set with the highest probability.
+0	Figure 2: Outline of the method of collocations.
+0	Differences from the method of context words are highlighted in boldface.
+0	The method is described in terms of "features" rather than "collocations" to reflect its full generality.
+0	matches is used to classify the target word.
+0	Yarowsky [1994] describes further refinements, such as detecting and pruning features that make a zero or negative contribution to overall performance.
+0	The method of decision lists, as just described, is almost the same as the method for collocations in Figure 2, where we take "features" in that figure to include both context words and collocations.
+0	The main difference is that during evidence gathering (step (2) at run time), decision lists terminate after matching the first feature.
+0	This obviates the need for resolving conflicts between features.
+0	Given that decision lists base their answer for a problem on the single strongest feature, their performance rests heavily on how the strength of a feature is defined.
+0	Yarowsky [1994] used the following metric to calculate the strength of a feature f: reliability(!)
+0	= abs (log( ::: D) This is for the case of a confusion set of two words, w1 and w2.
+0	It can be shown that this metric produces the identical ranking of features as the following somewhat simpler metric, provided p( w;IJ) > 0 for all i:5 reliability'(!)
+0	= max: p( w;if) ' As an example of using the metric, suppose f is the context word arid, and suppose that arid co­ occurs 10 times with desert and 1 time with dessert in the training corpus.
+0	Then reliability'(!)
+0	== max(10/11, 1/11) = 10/11 = 0.909.
+0	This value measures the extent to which the presence of the feature is unambiguously correlated with one particular w;.
+0	It can be thought of as the feature's reliability a.t picking out that w; from the others in the confusion set.
+0	5Jn fact, we guarantee that this inequalit.y holds by performing smoothing before calculating strength.
+0	We smooth the data by adding 1 to the count.
+0	of how many times each feature was observed for each w;.
+0	47 C o nf us io n se t B a s e l i n e C o H oe s CoHoes CoHoes : : : ; 1 : S 2 : S 3 w he th er I i t s p a s t t h a n b e i n g e f f e c t y o u r n u m b e r c o u n c i l r i s e b e t w e e n l e d e x c e p t p e a c e t h e r e p r i n c i p l e s i g h t 0 . 9 2 2 0 . 8 8 6 0 . 8 6 3 0 . 8 6 1 0 . 8 0 7 0 . 7 8 0 0 . 7 4 1 0 . 7 2 6 0 . 6 2 7 0 . 6 1 4 0 . 5 7 . 5 0 . 5 3 8 0 . . 5 3 0 0 . 4 4 2 0 . : 3 9 3 0 . 3 0 6 0 . 2 9 0 0 . 1 1 4 0 . 9 3 9 0.931 0.931 0 . 9 7 9 0.981 0.980 0 . 9 4 3 0.945 0.950 0 . 9 1 9 0.909 0.909 0 . 9 6 6 0.965 0.966 0 . 8 5 3 0.853 0.842 0 . 8 2 1 0.821 0.821 0 . 8 7 7 0.887 0.887 0 . 6 4 6 0.646 0.681 0 . 6 6 3 0.639 0.639 0 . 8 0 7 0.807 0.807 0 . 6 9 9 0.730 0.733 0 . 8 4 9 0.840 0.863 0 . 8 0 0 0.789 0.789 0 . 8 6 9 0.869 0.852 0 . 9 1 1 0.932 0.932 0 . 8 4 1 0.812 0.812 0 . 3 4 1 0.318 0.318 A vg no.
+0	of colloc ations 3 3 . 9 263.1 98.5.4 Table 3: Performance of the method of collocations as a function of f, the maximum length of a collocation.
+0	The bottom line of the table shows the number of collocations learned, averaged over all confusion sets, also as a function of e. One peculiar property of the reliability metric is that it ignores the prior probabilities of the words in the confusion set.
+0	For instance, in the arid example, it would award the same high score even if the total number of occurrences of desert and dessert in the training corpus were 50 and 5, respectively - in which case arid's performance of 10/11 would be exactly what one would expect by chance, and therefore hardly impressive.
+0	Besides the reliability metric, therefore, we also considered an alternative metric: the uncertainty coefficient of x, denoted U(xiy) [Press et al., 1988, p..501].
+0	U(xiy) measures how much additional information we get about the presence of the feature by knowing the choice of word in the confusion set.6 U(xiy) is calculated as follows: U(xiy) H(x) H(xiy) H ( x ) H ( x i y ) H ( x )-p(f)lnp(f)- p( .J)lnp(-.J) - Lp(w;) (p(flw;)lnp(flw;) + p( .Jiw;)lnp(•flw;)) The probabilities are ca.lculated for the population consisting of all occurrences in the training corpus of any w;.
+0	For instance, p(f) is the probability of feature f being present within this 6 This definition may seem backwards, but.
+0	is appropriate for use on the right-hand side of Bayes' rule, where the choice of word in the confusion set is t.he "given".
+0	48 C on te xt w or d pe ac e pzece co rp s p e a c e u n i t e d n a t i o n s o u r h e a r t j u s t i c e s t a t e a m e r i c a n a i d i n t e r n a t i o n a l w o m e n w a r w o r l d p i e c e o v e r m u s t g r e a t u n d e r h o w 4 9 1 4 1 1 2 0 0 1 5 0 2 7 1 1 2 0 1 2 0 1 2 0 1 1 0 1 1 0 1 1 0 1 0 0 2 0 1 4 0 3 1 1 . 5 1 1 4 1 1 1 1 1 1 1 0 1 1 0 1 t w o f o r a b o u t e v e r y l i t t l e l o n g o n e t h e so 5 1 2 8 3 3 8 4 9 4 9 5 1 0 6 1 1 1 4 2 3 1 7 9 113 9 1 4 1 6 2 2 To tal oc cu rr en ce s 1 8 4 126 Table 4: Excerpts from the list of 43 context words learned for {peace, piece} with k = 24.
+0	Each line gives a context word, and the num­ ber of peace and piece occurrences for which that context word occurred within ±k words.
+0	The last line of the table gives the total num­ ber of occurrences of peace and piece in the training corpus.
+0	Table 5: Excerpts from the sorted list of 98 collocations learned for {peace, piece} with £ = 2.
+0	Each line gives a collocation, and the number of peace and piece occurrences it matched.
+0	The last line of the table gives the total number of occurrences of peace and piece in the training corpus.
+0	49 population.
+0	Applying the U(xjy) metric to the arid example, the value returned now depends on the number of occurrences of deser·t and dessert in the training corpus.
+0	If these numbers are 50 and 5, then U(xly) = 0.0, reflecting the uninformativeness of the arid feature in this situation.
+0	If instead the numbers are 50 and 500, then U(:rjy) = 0.402, indicating arid's better-than-chance ability to pick out desrrt (10 out of 50 occurrences) over dessert (1 out of 500 occurrences).
+0	To compare the two strength metrics, we tried both on some practice confusion sets.
+0	Sometimes one metric did substantially better, sometimes the other.
+0	In the balance, the reliability metric seemed to give higher performance.
+0	This metric is therefore the one that will be used from here on.
+0	It was also used for all experiments involving the method of collocations.
+0	Table 6 shows the performance of decision lists with each metric for the usual confusion sets.
+0	As with the practice confusion sets, we see sometimes dramatic performance differences between the two metrics, and no clear winner.
+0	For instance, for {I, me}, the reliability metric did better than U(xjy) (0.980 versus 0.808); whereas for {between, among}, it did worse (0.659 versus 0.800).
+0	Further research is needed to understand the circumstances under which each metric performs best.
+0	Focusing for now on the reliability metric, Table 6 shows that the method of decision lists does, by and large, accomplish what it set out to do - namely, outperform either component method alone.
+0	There are, however, a. few cases where it falls short; for instance, for {between, among}, decision lists score only 0.6.59, compared with 0.759 for context words and 0.730 for collocations.7 We believe that the problem lies in the strength metric: because decision lists make their judgements based on a single piece of evidence, their performance is very sensitive to the metric used to select that piece of evidence.
+0	But as the reliability and U(xjy) metrics indicate, it is not completely clear how the metric should be defined.
+0	This problem is addressed in the next section.
+0	3.5 Hybrid method 2: Bayesian classifiers.
+0	The previous section confirmed that decision lists are effective at combining two complementary methods- context words and collocations.
+0	In doing the combination, however, decision lists look only at the single strongest piece of evidence for a given problem.
+0	\Ve hypothesize that even better performance can be obtained by taking into account all available evidence.
+0	This section presents a method of doing this based on Bayesian classifiers.
+0	Like decision lists, the Bayesian method starts with a list of all features, sorted by decreasing strength.
+0	It classifies an ambiguous target word by matching each feature in the list in turn against the target context.
+0	Instead of stopping at the first matching feature, however, it traverses the entire list, combining evidence from all matching features, and resolving conflicts where necessary.
+0	This method is essentially the same as the one for collocations (see Figure 2), except that it uses context words as well as collocations for the features.
+0	The only new wrinkle is in checking for conflicts between features (in step (2) at run time), as there are now two kinds of features to consider.
+0	If both features are context words, we say the features never conflict (as in the method of context words).
+0	If both features are collocations, we say they conflict iff they overlap (as in the method of collocations).
+0	The new case is if one feature is a context word, and the other is a collocation.
+0	Consider, for example, the context word walk, and the following collocations: (1) (2) (3) CONJ walk v PREP 7 1£ we use the U (xiy) metric instead, then d cision lists fall down on different examples; e.g., {its, it's}.
+0	50 C on fu si on se t Ba sel in e Cwords Collocs ± 3 2 Dl ist Dlist R el y U(xiy) w he th er I i t s p a s t t h a n b e i n g e f f e c t y o u r n u m b e r c o u n c i l n s e b e t w e e n l e d e x c e p t p e a c e t h e r e p r i n c i p l e s i g h t 0 . 9 2 2 0.902 0.931 0 . 8 8 6 0.914.
+0	0.981 0 . 8 6 3 0.862 0.945 0 . 8 6 1 0.861 0.909 0 . 8 0 7 0.931 0.965 0 . 7 8 0 0.791 0.853 0 . 7 4 1 0.747 0.821 0 . 7 2 6 0.816 0.887 0 . 6 2 7 0.646 0.646 0 . 6 1 4 0.639 0.639 0 . 5 7 . 5 0..575 0.807 0 . 5 3 8 0.759 0.730 0 . 5 3 0 0.530 0.840 0 . 4 4 2 0.695 0.789 0 . 3 9 3 0.754 0.869 0 . 3 0 6 0.726 0.932 0 . 2 9 0 0.290 0.812 0 . 1 1 4 0.455 0.318 0.
+0	93 5 0.829 0.
+0	98 0 0.808 0.
+0	93 1 0.805 0.
+0	93 2 0.892 0.
+0	96 7 0.961 0.
+0	84 2 0.933 0.
+0	82 1 0.654 0.
+0	86 8 0.896 0.
+0	62 9 0.667 0.
+0	62 7 0.651 0.
+0	80
+0	0.
+0	65 9 0.800 0.
+0	84 0 0.840 0.
+0	78 9 0.726 0.
+0	85 2 0.836 0.
+0	91 4 0.906 0.
+0	81 2 0.841 0.
+0	43 2 0.568 Table 6: Performance of decision lists with the reliability and U(xiy) strength metrics.
+0	To some extent, all of these collocations conflict with walk.
+0	Collocation (1) is the most blatant case; if it matches the target context, this logically implies that the context word walk will match.
+0	If collocation (2) matches, this guarantees that one of the possible tags of walk will be present nearby the target word, thereby elevating the probability that walk will match within ±k words.
+0	If collocation (3) matches, this guarantees that there are two positions nearby the target word that are incompatible with walk, thereby reducing the probability that walk will match.
+0	If we were to treat all of these cases as conflicts, we would end up losing a great deal of (potentially useful) evidence.
+0	Instead, we adopt the more relaxed policy of only flagging the most egregious conflicts - here, the one between collocation (1) and walk.
+0	In general, we will say that a collocation and a context word conflict iff the collocation contains an explicit test for the context word.
+0	Table 7 compares all methods covered so far - baseline, two component methods, and two hybrid methods.
+0	(A sixth method, trigrams, is included as well-it will be discussed in Section 4.)
+0	The table shows that the Bayesian hybrid method does at least as well as the previous four methods for almost every confusion set.
+0	Occasionally it scores slightly less than collocations; this appears to be due to some averaging effect where noisy context words are dragging it down.
+0	Occasionally too it scores less than decision lists, but never by much; on the whole, it yields a modest but consistent improvement, and in the case of {between, among}, a sizable improvement.
+0	We believe the improvement is due to considering all of the evidence, rather than just the single strongest piece, which makes the method more robust to inaccurate judgements about which piece of evidence is "strongest".
+0	51 C on fu si on se t B as eli 11 e C w or ds Collocs Dlist Bayes ± 3 : : ; 2 R e l y R e l y Trigra ms w he th er I i t s p a s t t h a n b e i n g e f f e c t y o u r n u m b e r c o u n c i l n s e b e t w e e n l e d e x c e p t p e a c e t h e r e p r i n c i p l e s i g h t 0 . 9 2 2 0 . 8 8 6 0 . 8 6 3 0 . 8 6 1 0 . 8 0 7 0 . 7 8 0 0 . 7 4 1 0 . 7 2 6 0 . 6 2 7 0 . 6 1 4 0 . 5 7 5 0 ..
+0	5 3 8 0 ..
+0	5 3 0 0 . 4 4 2 0 . 3 9 3 0 . : 3 0 6 0 . 2 9 0 0 . 1 1 4 0 . 9 0 2 0.931 0.93.5 0.935 0 . 9 1 4 0.981 0.980 0.985 0 . 8 6 2 0.945 0.931 0.942 0 . 8 6 1 0.909 0.932 0.924 0 . 9 3 1 0.96.5 0.967 0.973 0 . 7 9 1 0.853 0.842 0.869 0 . 7 4 7 0.821 0.821 0.827 0 . 8 1 6 0.887 0.868 0.901 0 . 6 4 6 0.646 0.629 0.662 0 . 6 : 3 9 0.639 0.627 0.639 0 ..
+0	5 7 . 0 . 7 . 5 9 0.730 0.6.59 0.786 0 ..
+0	5 3 0 0.840 0.840 0.840 O . G 9.
+0	0 . 7 . 5 4 0.869 0.8.52 0.8.52 0 . 7 2 6 0.932 0.914 0.916 0 . 2 9 0 0.812 0.812 0.812 0 . 4 . 5 . 0.8 73 0.9 85 0.9 65 0.9 55 0.7 80 0.9 78 0.9 75 0.9 58 0.6 36 0.6 51 0.5 74 0..
+0	538 0.9 09 0.6 9.5 0.3 93 0.9 61 0.6 09 0.2 50 Table 7: Performance of six methods for context-sensitive spelling correction.
+0	4 Evaluation.
+0	While the previous section demonstrated that the Bayesian hybrid method does better than its components, we would still like to know how it compares with alternative methods.
+0	We looked at a method based on part-of-speech trigrams, developed and implemented by Schabes [1995].
+0	Schabes's method can be viewed as performing an abductive inference: given a sentence con­ taining an ambiguous word, it asks which choice w; for that word would best explain the observed sequence of words in the sentence.
+0	It answers this question by substituting each w; in turn into the sentence.
+0	The w; that produces the highest-probability sentence is selected.
+0	Sentence probabilities are calculated using a part-of-speech trigram model.
+0	We tried Schabes's method on the usual confusion sets; the results are in the last column of Table 7.
+0	It can be seen that trigrams and the Bayesian hybrid method each have their better moments.
+0	Trigrams are at their worst when the words in the confusion set have the same part of speech.
+0	In this case, trigrams can distinguish between the words only by their prior probabilities­ this follows from the way the method calculates sentence probabilities.
+0	Thus, for {between, among}, for example, where both words are prepositions, trigrams score the same as the baseline method.
+0	In such cases, the Bayesian hybrid method is clearly better.
+0	On the other hand, when the words in the confusion set have different parts of speech- as in, for example, {there, their, they're}­ trigrams are often better than the Bayesian method.
+0	We believe this is because trigrams look not just at a few words on either side of the target word, but at the part-of-speech sequence of the whole sentence.
+0	This analysis indicates a complementarity between trigrams and Bayes, and suggests a 52 combination in which trigrams would be applied first, but if trigrams determine that the words in the confusion set have the same part of speech for the sentence at issue, then the sentence would be passed to the Bayesian method.
+0	This is a research direction we plan to pursue.
+0	The work reported here builds on Yarowsky's use of decision lists to combine two component methods- context words and collocations.
+0	Decision lists pool the evidence from the two methods, and solve a target problem by applying the single strongest piece of evidence, whichever type that happens to be.
+0	This paper investigated the hypothesis that even better performance can be obtained by basing decisions on not just the single strongest piece of evidence, but on all available evidence.
+0	A method for doing this, based on Bayesian classifiers, was presented.
+0	It was applied to the task of context-sensitive spelling correction, and was found to outperform the component methods as well as decision lists.
+0	A comparison of the Bayesian hybrid method with Schabes's trigram-based method suggested a further combination in which trigrams would be used when the words in the confusion set had different parts of speech, and the Bayesian method would be used otherwise.
+0	This is a direction we plan to pursue in future research.
+0	We would like to thank Bill Freeman, Yves Schabes, Emmanuel Roche, and Jacki Golding for helpful and enjoyable discussions on the work reported here.

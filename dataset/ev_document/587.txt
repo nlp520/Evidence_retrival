@@ -1,0 +1,321 @@
+0	Better Arabic Parsing: Baselines, Evaluations, and Analysis
+0	In this paper, we offer broad insight into the underperformance of Arabic constituency parsing by analyzing the interplay of linguistic phenomena, annotation choices, and model design.
+0	First, we identify sources of syntactic ambiguity understudied in the existing parsing literature.
+0	Second, we show that although the Penn Arabic Treebank is similar to other tree- banks in gross statistical terms, annotation consistency remains problematic.
+0	Third, we develop a human interpretable grammar that is competitive with a latent variable PCFG.
+0	Fourth, we show how to build better models for three different parsers.
+0	Finally, we show that in application settings, the absence of gold segmentation lowers parsing performance by 2–5% F1.
+0	It is well-known that constituency parsing models designed for English often do not generalize easily to other languages and treebanks.1 Explanations for this phenomenon have included the relative informativeness of lexicalization (Dubey and Keller, 2003; Arun and Keller, 2005), insensitivity to morphology (Cowan and Collins, 2005; Tsarfaty and Sima’an, 2008), and the effect of variable word order (Collins et al., 1999).
+0	Certainly these linguistic factors increase the difficulty of syntactic disambiguation.
+0	Less frequently studied is the interplay among language, annotation choices, and parsing model design (Levy and Manning, 2003; Ku¨ bler, 2005).
+0	1 The apparent difficulty of adapting constituency models to non-configurational languages has been one motivation for dependency representations (Hajicˇ and Zema´nek, 2004; Habash and Roth, 2009).
+0	To investigate the influence of these factors, we analyze Modern Standard Arabic (henceforth MSA, or simply “Arabic”) because of the unusual opportunity it presents for comparison to English parsing results.
+0	The Penn Arabic Treebank (ATB) syntactic guidelines (Maamouri et al., 2004) were purposefully borrowed without major modification from English (Marcus et al., 1993).
+0	Further, Maamouri and Bies (2004) argued that the English guidelines generalize well to other languages.
+0	But Arabic contains a variety of linguistic phenomena unseen in English.
+0	Crucially, the conventional orthographic form of MSA text is unvocalized, a property that results in a deficient graphical representation.
+0	For humans, this characteristic can impede the acquisition of literacy.
+0	How do additional ambiguities caused by devocalization affect statistical learning?
+0	How should the absence of vowels and syntactic markers influence annotation choices and grammar development?
+0	Motivated by these questions, we significantly raise baselines for three existing parsing models through better grammar engineering.
+0	Our analysis begins with a description of syntactic ambiguity in unvocalized MSA text (§2).
+0	Next we show that the ATB is similar to other tree- banks in gross statistical terms, but that annotation consistency remains low relative to English (§3).
+0	We then use linguistic and annotation insights to develop a manually annotated grammar for Arabic (§4).
+0	To facilitate comparison with previous work, we exhaustively evaluate this grammar and two other parsing models when gold segmentation is assumed (§5).
+0	Finally, we provide a realistic eval uation in which segmentation is performed both in a pipeline and jointly with parsing (§6).
+0	We quantify error categories in both evaluation settings.
+0	To our knowledge, ours is the first analysis of this kind for Arabic parsing.
+0	Arabic is a morphologically rich language with a root-and-pattern system similar to other Semitic languages.
+0	The basic word order is VSO, but SVO, VOS, and VO configurations are also possible.2 Nouns and verbs are created by selecting a consonantal root (usually triliteral or quadriliteral), which bears the semantic core, and adding affixes and diacritics.
+0	Particles are uninflected.
+0	Word Head Of Complement POS 1 '01 inna “Indeed, truly” VP Noun VBP 2 '01 anna “That” SBAR Noun IN 3 01 in “If” SBAR Verb IN 4 01 an “to” SBAR Verb IN Table 1: Diacritized particles and pseudo-verbs that, after orthographic normalization, have the equivalent surface form 0 an.
+0	The distinctions in the ATB are linguistically justified, but complicate parsing.
+0	Table 8a shows that the best model recovers SBAR at only 71.0% F1.
+0	Diacritics can also be used to specify grammatical relations such as case and gender.
+0	But diacritics are not present in unvocalized text, which is the standard form of, e.g., news media documents.3 VBD she added VP PUNC S VP VBP NP ...
+0	VBD she added VP PUNC “ SBAR IN NP 0 NN.
+0	Let us consider an example of ambiguity caused by devocalization.
+0	Table 1 shows four words “ 0 Indeed NN Indeed Saddamwhose unvocalized surface forms 0 an are indistinguishable.
+0	Whereas Arabic linguistic theory as Saddam (a) Reference (b) Stanford signs (1) and (2) to the class of pseudo verbs 01 +i J>1 inna and her sisters since they can beinflected, the ATB conventions treat (2) as a com plementizer, which means that it must be the head of SBAR.
+0	Because these two words have identical complements, syntax rules are typically unhelpful for distinguishing between them.
+0	This is especially true in the case of quotations—which are common in the ATB—where (1) will follow a verb like (2) (Figure 1).
+0	Even with vocalization, there are linguistic categories that are difficult to identify without semantic clues.
+0	Two common cases are the attribu tive adjective and the process nominal _; maSdar, which can have a verbal reading.4 At tributive adjectives are hard because they are or- thographically identical to nominals; they are inflected for gender, number, case, and definiteness.
+0	Moreover, they are used as substantives much 2 Unlike machine translation, constituency parsing is not significantly affected by variable word order.
+0	However, when grammatical relations like subject and object are evaluated, parsing performance drops considerably (Green et al., 2009).
+0	In particular, the decision to represent arguments in verb- initial clauses as VP internal makes VSO and VOS configurations difficult to distinguish.
+0	Topicalization of NP subjects in SVO configurations causes confusion with VO (pro-drop).
+0	3 Techniques for automatic vocalization have been studied (Zitouni et al., 2006; Habash and Rambow, 2007).
+0	However, the data sparsity induced by vocalization makes it difficult to train statistical models on corpora of the size of the ATB, so vocalizing and then parsing may well not help performance.
+0	4 Traditional Arabic linguistic theory treats both of these types as subcategories of noun  '.i . Figure 1: The Stanford parser (Klein and Manning, 2002) is unable to recover the verbal reading of the unvocalized surface form 0 an (Table 1).
+0	more frequently than is done in English.
+0	Process nominals name the action of the transitive or ditransitive verb from which they derive.
+0	The verbal reading arises when the maSdar has an NP argument which, in vocalized text, is marked in the accusative case.
+0	When the maSdar lacks a determiner, the constituent as a whole resem bles the ubiquitous annexation construct f iDafa.
+0	Gabbard and Kulick (2008) show that there is significant attachment ambiguity associated with iDafa, which occurs in 84.3% of the trees in our development set.
+0	Figure 4 shows a constituent headed by a process nominal with an embedded adjective phrase.
+0	All three models evaluated in this paper incorrectly analyze the constituent as iDafa; none of the models attach the attributive adjectives properly.
+0	For parsing, the most challenging form of ambiguity occurs at the discourse level.
+0	A defining characteristic of MSA is the prevalence of discourse markers to connect and subordinate words and phrases (Ryding, 2005).
+0	Instead of offsetting new topics with punctuation, writers of MSA in sert connectives such as  wa and  fa to link new elements to both preceding clauses and the text as a whole.
+0	As a result, Arabic sentences are usually long relative to English, especially after Length English (WSJ) Arabic (ATB) ≤ 20 41.9% 33.7% ≤ 40 92.4% 73.2% ≤ 63 99.7% 92.6% ≤ 70 99.9% 94.9% Table 2: Frequency distribution for sentence lengths in the WSJ (sections 2–23) and the ATB (p1–3).
+0	English parsing evaluations usually report results on sentences up to length 40.
+0	Arabic sentences of up to length 63 would need to be.
+0	evaluated to account for the same fraction of the data.
+0	We propose a limit of 70 words for Arabic parsing evaluations.
+0	ATB CTB6 Negra WSJ Trees 23449 28278 20602 43948 Word Typess 40972 45245 51272 46348 Tokens 738654 782541 355096 1046829 Tags 32 34 499 45 Phrasal Cats 22 26 325 27 Test OOV 16.8% 22.2% 30.5% 13.2% Per Sentence Table 4: Gross statistics for several different treebanks.
+0	Test set OOV rate is computed using the following splits: ATB (Chiang et al., 2006); CTB6 (Huang and Harper, 2009); Negra (Dubey and Keller, 2003); English, sections 221 (train) and section 23 (test).
+0	Table 3: Dev set frequencies for the two most significant discourse markers in Arabic are skewed toward analysis as a conjunction.
+0	segmentation (Table 2).
+0	The ATB gives several different analyses to these words to indicate different types of coordination.
+0	But it conflates the coordinating and discourse separator functions of wa (<..4.b ) into one analysis: conjunction(Table 3).
+0	A better approach would be to distin guish between these cases, possibly by drawing on the vast linguistic work on Arabic connectives (AlBatal, 1990).
+0	We show that noun-noun vs. discourse-level coordination ambiguity in Arabic is a significant source of parsing errors (Table 8c).
+0	3.1 Gross Statistics.
+0	Linguistic intuitions like those in the previous section inform language-specific annotation choices.
+0	The resulting structural differences between tree- banks can account for relative differences in parsing performance.
+0	We compared the ATB5 to tree- banks for Chinese (CTB6), German (Negra), and English (WSJ) (Table 4).
+0	The ATB is disadvantaged by having fewer trees with longer average 5 LDC A-E catalog numbers: LDC2008E61 (ATBp1v4), LDC2008E62 (ATBp2v3), and LDC2008E22 (ATBp3v3.1).
+0	We map the ATB morphological analyses to the shortened “Bies” tags for all experiments.
+0	yields.6 But to its great advantage, it has a high ratio of non-terminals/terminals (μ Constituents / μ Length).
+0	Evalb, the standard parsing metric, is biased toward such corpora (Sampson and Babarczy, 2003).
+0	Also surprising is the low test set OOV rate given the possibility of morphological variation in Arabic.
+0	In general, several gross corpus statistics favor the ATB, so other factors must contribute to parsing underperformance.
+0	3.2 Inter-annotator Agreement.
+0	Annotation consistency is important in any supervised learning task.
+0	In the initial release of the ATB, inter-annotator agreement was inferior to other LDC treebanks (Maamouri et al., 2008).
+0	To improve agreement during the revision process, a dual-blind evaluation was performed in which 10% of the data was annotated by independent teams.
+0	Maamouri et al.
+0	(2008) reported agreement between the teams (measured with Evalb) at 93.8% F1, the level of the CTB.
+0	But Rehbein and van Genabith (2007) showed that Evalb should not be used as an indication of real difference— or similarity—between treebanks.
+0	Instead, we extend the variation n-gram method of Dickinson (2005) to compare annotation error rates in the WSJ and ATB.
+0	For a corpus C, let M be the set of tuples ∗n, l), where n is an n-gram with bracketing label l. If any n appears 6 Generative parsing performance is known to deteriorate with sentence length.
+0	As a result, Habash et al.
+0	(2006) developed a technique for splitting and chunking long sentences.
+0	In application settings, this may be a profitable strategy.
+0	NN  .e NP NNP NP DTNNP NN  .e NP NP NNP NP Table 5: Evaluation of 100 randomly sampled variation nuclei types.
+0	The samples from each corpus were independently evaluated.
+0	The ATB has a much higher fraction of nuclei per tree, and a higher type-level error rate.
+0	summit Sharm (a) Al-Sheikh summit Sharm (b) DTNNP Al-Sheikh in a corpus position without a bracketing label, then we also add ∗n, NIL) to M. We call the set of unique n-grams with multiple labels in M the variation nuclei of C. Bracketing variation can result from either annotation errors or linguistic ambiguity.
+0	Human evaluation is one way to distinguish between the two cases.
+0	Following Dickinson (2005), we randomly sampled 100 variation nuclei from each corpus and evaluated each sample for the presence of an annotation error.
+0	The human evaluators were a non-native, fluent Arabic speaker (the first author) for the ATB and a native English speaker for the WSJ.7 Table 5 shows type- and token-level error rates for each corpus.
+0	The 95% confidence intervals for type-level errors are (5580, 9440) for the ATB and (1400, 4610) for the WSJ.
+0	The results clearly indicate increased variation in the ATB relative to the WSJ, but care should be taken in assessing the magnitude of the difference.
+0	On the one hand, the type-level error rate is not calibrated for the number of n-grams in the sample.
+0	At the same time, the n-gram error rate is sensitive to samples with extreme n-gram counts.
+0	For example, one of the ATB samples was the determiner -"" ; dhalik“that.” The sample occurred in 1507 corpus po sitions, and we found that the annotations were consistent.
+0	If we remove this sample from the evaluation, then the ATB type-level error rises to only 37.4% while the n-gram error rate increases to 6.24%.
+0	The number of ATB n-grams also falls below the WSJ sample size as the largest WSJ sample appeared in only 162 corpus positions.
+0	7 Unlike Dickinson (2005), we strip traces and only con-.
+0	Figure 2: An ATB sample from the human evaluation.
+0	The ATB annotation guidelines specify that proper nouns should be specified with a flat NP (a).
+0	But the city name Sharm Al- Sheikh is also iDafa, hence the possibility for the incorrect annotation in (b).
+0	We can use the preceding linguistic and annotation insights to build a manually annotated Arabic grammar in the manner of Klein and Manning (2003).
+0	Manual annotation results in human in- terpretable grammars that can inform future tree- bank annotation decisions.
+0	A simple lexicalized PCFG with second order Markovization gives relatively poor performance: 75.95% F1 on the test set.8 But this figure is surprisingly competitive with a recent state-of-the-art baseline (Table 7).
+0	In our grammar, features are realized as annotations to basic category labels.
+0	We start with noun features since written Arabic contains a very high proportion of NPs.
+0	genitiveMark indicates recursive NPs with a indefinite nominal left daughter and an NP right daughter.
+0	This is the form of recursive levels in iDafa constructs.
+0	We also add an annotation for one-level iDafa (oneLevelIdafa) constructs since they make up more than 75% of the iDafa NPs in the ATB (Gabbard and Kulick, 2008).
+0	For all other recursive NPs, we add a common annotation to the POS tag of the head (recursiveNPHead).
+0	Base NPs are the other significant category of nominal phrases.
+0	markBaseNP indicates these non-recursive nominal phrases.
+0	This feature includes named entities, which the ATB marks with a flat NP node dominating an arbitrary number of NNP pre-terminal daughters (Figure 2).
+0	For verbs we add two features.
+0	First we mark any node that dominates (at any level) a verb sider POS tags when pre-terminals are the only intervening nodes between the nucleus and its bracketing (e.g., unaries, base NPs).
+0	Since our objective is to compare distributions of bracketing discrepancies, we do not use heuristics to prune the set of nuclei.
+0	8 We use head-finding rules specified by a native speaker.
+0	of Arabic.
+0	This PCFG is incorporated into the Stanford Parser, a factored model that chooses a 1-best parse from the product of constituency and dependency parses.
+0	termined by the category of the word that follows it.
+0	Because conjunctions are elevated in the parse trees when they separate recursive constituents, we choose the right sister instead of the category of the next word.
+0	We create equivalence classes for verb, noun, and adjective POS categories.
+0	Table 6: Incremental dev set results for the manually annotated grammar (sentences of length ≤ 70).
+0	phrase (markContainsVerb).
+0	This feature has a linguistic justification.
+0	Historically, Arabic grammar has identified two sentences types: those that begin with a nominal ( '.i u _..
+0	), and thosethat begin with a verb ( ub..i u _..
+0	But for eign learners are often surprised by the verbless predications that are frequently used in Arabic.
+0	Although these are technically nominal, they have become known as “equational” sentences.
+0	mark- ContainsVerb is especially effective for distinguishing root S nodes of equational sentences.
+0	We also mark all nodes that dominate an SVO configuration (containsSVO).
+0	In MSA, SVO usually appears in non-matrix clauses.
+0	Lexicalizing several POS tags improves performance.
+0	splitIN captures the verb/preposition idioms that are widespread in Arabic.
+0	Although this feature helps, we encounter one consequence of variable word order.
+0	Unlike the WSJ corpus which has a high frequency of rules like VP →VB PP, Arabic verb phrases usually have lexi calized intervening nodes (e.g., NP subjects and direct objects).
+0	For example, we might have VP → VB NP PP, where the NP is the subject.
+0	This annotation choice weakens splitIN.
+0	We compare the manually annotated grammar, which we incorporate into the Stanford parser, to both the Berkeley (Petrov et al., 2006) and Bikel (Bikel, 2004) parsers.
+0	All experiments use ATB parts 1–3 divided according to the canonical split suggested by Chiang et al.
+0	(2006).
+0	Preprocessing the raw trees improves parsing performance considerably.9 We first discard all trees dominated by X, which indicates errors and non-linguistic text.
+0	At the phrasal level, we remove all function tags and traces.
+0	We also collapse unary chains withidentical basic categories like NP → NP.
+0	The pre terminal morphological analyses are mapped to the shortened “Bies” tags provided with the tree- bank.
+0	Finally, we add “DT” to the tags for definite nouns and adjectives (Kulick et al., 2006).
+0	The orthographic normalization strategy we use is simple.10 In addition to removing all diacritics, we strip instances of taTweel J=J4.i, collapse variants of alif to bare alif,11 and map Ara bic punctuation characters to their Latin equivalents.
+0	We retain segmentation markers—which are consistent only in the vocalized section of the treebank—to differentiate between e.g.  “they” and  + “their.” Because we use the vocalized section, we must remove null pronoun markers.
+0	In Table 7 we give results for several evaluation metrics.
+0	Evalb is a Java re-implementation of the standard labeled precision/recall metric.12 The ATB gives all punctuation a single tag.
+0	For parsing, this is a mistake, especially in the case of interrogatives.
+0	splitPUNC restores the convention of the WSJ.
+0	We also mark all tags that dominate a word with the feminine ending :: taa mar buuTa (markFeminine).
+0	To differentiate between the coordinating and discourse separator functions of conjunctions (Table 3), we mark each CC with the label of its right sister (splitCC).
+0	The intuition here is that the role of a discourse marker can usually be de 9 Both the corpus split and pre-processing code are avail-.
+0	able at http://nlp.stanford.edu/projects/arabic.shtml.
+0	10 Other orthographic normalization schemes have been suggested for Arabic (Habash and Sadat, 2006), but we observe negligible parsing performance differences between these and the simple scheme used in this evaluation.
+0	11 taTweel (-) is an elongation character used in Arabic script to justify text.
+0	It has no syntactic function.
+0	Variants of alif are inconsistently used in Arabic texts.
+0	For alif with hamza, normalization can be seen as another level of devocalization.
+0	12 For English, our Evalb implementation is identical to the most recent reference (EVALB20080701).
+0	For Arabic we M o d e l S y s t e m L e n g t h L e a f A n c e s t o r Co rpu s Sent Exact E v a l b L P LR F1 T a g % B a s e l i n e 7 0 St an for d (v 1.
+0	6. 3) all G o l d P O S 7 0 0.7 91 0.825 358 0.7 73 0.818 358 0.8 02 0.836 452 80.
+0	37 79.
+0	36 79.
+0	86 78.
+0	92 77.
+0	72 78.
+0	32 81.
+0	07 80.
+0	27 80.
+0	67 95.
+0	58 95.
+0	49 99.
+0	95 B a s e li n e ( S e lf t a g ) 70 a l l B i k e l ( v 1 . 2 ) B a s e l i n e ( P r e t a g ) 7 0 a l l G o l d P O S 70 0.7 70 0.801 278 0.7 52 0.794 278 0.7 71 0.804 295 0.7 52 0.796 295 0.7 75 0.808 309 77.
+0	92 76.
+0	00 76.
+0	95 76.
+0	96 75.
+0	01 75.
+0	97 78.
+0	35 76.
+0	72 77.
+0	52 77.
+0	31 75.
+0	64 76.
+0	47 78.
+0	83 77.
+0	18 77.
+0	99 94.
+0	64 94.
+0	63 95.
+0	68 95.
+0	68 96.
+0	60 ( P e tr o v, 2 0 0 9 ) all B e r k e l e y ( S e p . 0 9 ) B a s e l i n e 7 0 a l l G o l d P O S 70 — — — 0 . 8 0 9 0.839 335 0 . 7 9
+0	0 . 8 3 1 0.859 496 76.
+0	40 75.
+0	30 75.
+0	85 82.
+0	32 81.
+0	63 81.
+0	97 81.
+0	43 80.
+0	73 81.
+0	08 84.
+0	37 84.
+0	21 84.
+0	29 — 95.
+0	07 95.
+0	02 99.
+0	87 Table 7: Test set results.
+0	Maamouri et al.
+0	(2009b) evaluated the Bikel parser using the same ATB split, but only reported dev set results with gold POS tags for sentences of length ≤ 40.
+0	The Bikel GoldPOS configuration only supplies the gold POS tags; it does not force the parser to use them.
+0	We are unaware of prior results for the Stanford parser.
+0	F1 85 Berkeley 80 Stanford.
+0	Bikel 75 training trees 5000 10000 15000 Figure 3: Dev set learning curves for sentence lengths ≤ 70.
+0	All three curves remain steep at the maximum training set size of 18818 trees.
+0	The Leaf Ancestor metric measures the cost of transforming guess trees to the reference (Sampson and Babarczy, 2003).
+0	It was developed in response to the non-terminal/terminal bias of Evalb, but Clegg and Shepherd (2005) showed that it is also a valuable diagnostic tool for trees with complex deep structures such as those found in the ATB.
+0	For each terminal, the Leaf Ancestor metric extracts the shortest path to the root.
+0	It then computes a normalized Levenshtein edit distance between the extracted chain and the reference.
+0	The range of the score is between 0 and 1 (higher is better).
+0	We report micro-averaged (whole corpus) and macro-averaged (per sentence) scores along add a constraint on the removal of punctuation, which has a single tag (PUNC) in the ATB.
+0	Tokens tagged as PUNC are not discarded unless they consist entirely of punctuation.
+0	with the number of exactly matching guess trees.
+0	5.1 Parsing Models.
+0	The Stanford parser includes both the manually annotated grammar (§4) and an Arabic unknown word model with the following lexical features: 1.
+0	Presence of the determiner J Al. 2.
+0	Contains digits.
+0	3.
+0	Ends with the feminine affix :: p. 4.
+0	Various verbal (e.g., , .::) and adjectival.
+0	suffixes (e.g., =) Other notable parameters are second order vertical Markovization and marking of unary rules.
+0	Modifying the Berkeley parser for Arabic is straightforward.
+0	After adding a ROOT node to all trees, we train a grammar using six split-and- merge cycles and no Markovization.
+0	We use the default inference parameters.
+0	Because the Bikel parser has been parameter- ized for Arabic by the LDC, we do not change the default model settings.
+0	However, when we pre- tag the input—as is recommended for English— we notice a 0.57% F1 improvement.
+0	We use the log-linear tagger of Toutanova et al.
+0	(2003), which gives 96.8% accuracy on the test set.
+0	5.2 Discussion.
+0	The Berkeley parser gives state-of-the-art performance for all metrics.
+0	Our baseline for all sentence lengths is 5.23% F1 higher than the best previous result.
+0	The difference is due to more careful S-NOM NP NP NP VP VBG :: b NP restoring NP ADJP NN :: b NP NN NP NP ADJP DTJJ ADJP DTJJ NN :: b NP NP NP ADJP ADJP DTJJ J ..i NN :: b NP NP NP ADJP ADJP DTJJ NN _; NP PRP DTJJ DTJJ J ..i _; PRP J ..i NN _; NP PRP DTJJ NN _; NP PRP DTJJ J ..i role its constructive effective (b) Stanford (c) Berkeley (d) Bik el (a) Reference Figure 4: The constituent Restoring of its constructive and effective role parsed by the three different models (gold segmentation).
+0	The ATB annotation distinguishes between verbal and nominal readings of maSdar process nominals.
+0	Like verbs, maSdar takes arguments and assigns case to its objects, whereas it also demonstrates nominal characteristics by, e.g., taking determiners and heading iDafa (Fassi Fehri, 1993).
+0	In the ATB, :: b asta’adah is tagged 48 times as a noun and 9 times as verbal noun.
+0	Consequently, all three parsers prefer the nominal reading.
+0	Table 8b shows that verbal nouns are the hardest pre-terminal categories to identify.
+0	None of the models attach the attributive adjectives correctly.
+0	pre-processing.
+0	However, the learning curves in Figure 3 show that the Berkeley parser does not exceed our manual grammar by as wide a margin as has been shown for other languages (Petrov, 2009).
+0	Moreover, the Stanford parser achieves the most exact Leaf Ancestor matches and tagging accuracy that is only 0.1% below the Bikel model, which uses pre-tagged input.
+0	In Figure 4 we show an example of variation between the parsing models.
+0	We include a list of per-category results for selected phrasal labels, POS tags, and dependencies in Table 8.
+0	The errors shown are from the Berkeley parser output, but they are representative of the other two parsing models.
+0	6 Joint Segmentation and Parsing.
+0	Although the segmentation requirements for Arabic are not as extreme as those for Chinese, Arabic is written with certain cliticized prepositions, pronouns, and connectives connected to adjacent words.
+0	Since these are distinct syntactic units, they are typically segmented.
+0	The ATB segmentation scheme is one of many alternatives.
+0	Until now, all evaluations of Arabic parsing—including the experiments in the previous section—have assumed gold segmentation.
+1	But gold segmentation is not available in application settings, so a segmenter and parser are arranged in a pipeline.
+0	Segmentation errors cascade into the parsing phase, placing an artificial limit on parsing performance.
+0	Lattice parsing (Chappelier et al., 1999) is an alternative to a pipeline that prevents cascading errors by placing all segmentation options into the parse chart.
+0	Recently, lattices have been used successfully in the parsing of Hebrew (Tsarfaty, 2006; Cohen and Smith, 2007), a Semitic language with similar properties to Arabic.
+0	We extend the Stanford parser to accept pre-generated lattices, where each word is represented as a finite state automaton.
+0	To combat the proliferation of parsing edges, we prune the lattices according to a hand-constructed lexicon of 31 clitics listed in the ATB annotation guidelines (Maamouri et al., 2009a).
+0	Formally, for a lexicon L and segments I ∈ L, O ∈/ L, each word automaton accepts the language I∗(O + I)I∗.
+0	Aside from adding a simple rule to correct alif deletion caused by the preposition J, no other language-specific processing is performed.
+0	Our evaluation includes both weighted and un- weighted lattices.
+0	We weight edges using a unigram language model estimated with Good- Turing smoothing.
+0	Despite their simplicity, uni- gram weights have been shown as an effective feature in segmentation models (Dyer, 2009).13 The joint parser/segmenter is compared to a pipeline that uses MADA (v3.0), a state-of-the-art Arabic segmenter, configured to replicate ATB segmentation (Habash and Rambow, 2005).
+0	MADA uses an ensemble of SVMs to first re-rank the output of a deterministic morphological analyzer.
+0	For each 13 Of course, this weighting makes the PCFG an improper distribution.
+0	However, in practice, unknown word models also make the distribution improper.
+0	Parent Head Modif er Dir # gold F1 Label # gold F1 NP NP TAG R 946 0.54 ADJP 1216 59.45 S S S R 708 0.57 SBAR 2918 69.81 NP NP ADJ P R 803 0.64 FRAG 254 72.87 NP NP N P R 2907 0.66 VP 5507 78.83 NP NP SBA R R 1035 0.67 S 6579 78.91 NP NP P P R 2713 0.67 PP 7516 80.93 VP TAG P P R 3230 0.80 NP 34025 84.95 NP NP TAG L 805 0.85 ADVP 1093 90.64 VP TAG SBA R R 772 0.86 WHN P 787 96.00 S VP N P L 961 0.87 (a) Major phrasal categories (b) Major POS categories (c) Ten lowest scoring (Collins, 2003)-style dependencies occurring more than 700 times Table 8: Per category performance of the Berkeley parser on sentence lengths ≤ 70 (dev set, gold segmentation).
+0	(a) Of the high frequency phrasal categories, ADJP and SBAR are the hardest to parse.
+0	We showed in §2 that lexical ambiguity explains the underperformance of these categories.
+0	(b) POS tagging accuracy is lowest for maSdar verbal nouns (VBG,VN) and adjectives (e.g., JJ).
+0	Richer tag sets have been suggested for modeling morphologically complex distinctions (Diab, 2007), but we find that linguistically rich tag sets do not help parsing.
+0	(c) Coordination ambiguity is shown in dependency scores by e.g., ∗SSS R) and ∗NP NP NP R).
+0	∗NP NP PP R) and ∗NP NP ADJP R) are both iDafa attachment.
+0	input token, the segmentation is then performed deterministically given the 1-best analysis.
+0	Since guess and gold trees may now have different yields, the question of evaluation is complex.
+0	Cohen and Smith (2007) chose a metric like SParseval (Roark et al., 2006) that first aligns the trees and then penalizes segmentation errors with an edit-distance metric.
+0	But we follow the more direct adaptation of Evalb suggested by Tsarfaty (2006), who viewed exact segmentation as the ultimate goal.
+0	Therefore, we only score guess/gold pairs with identical character yields, a condition that allows us to measure parsing, tagging, and segmentation accuracy by ignoring whitespace.
+0	Table 9 shows that MADA produces a high quality segmentation, and that the effect of cascading segmentation errors on parsing is only 1.92% F1.
+0	However, MADA is language-specific and relies on manually constructed dictionaries.
+0	Conversely, the lattice parser requires no linguistic resources and produces segmentations of comparable quality.
+0	Nonetheless, parse quality is much lower in the joint model because a lattice is effectively a long sentence.
+0	A cell in the bottom row of the parse chart is required for each potential whitespace boundary.
+0	As we have said, parse quality decreases with sentence length.
+0	Finally, we note that simple weighting gives nearly a 2% F1 improvement, whereas Goldberg and Tsarfaty (2008) found that unweighted lattices were more effective for Hebrew.
+0	Table 9: Dev set results for sentences of length ≤ 70.
+0	Coverage indicates the fraction of hypotheses in which the character yield exactly matched the reference.
+0	Each model was able to produce hypotheses for all input sentences.
+0	In these experiments, the input lacks segmentation markers, hence the slightly different dev set baseline than in Table 6.
+0	By establishing significantly higher parsing baselines, we have shown that Arabic parsing performance is not as poor as previously thought, but remains much lower than English.
+0	We have described grammar state splits that significantly improve parsing performance, catalogued parsing errors, and quantified the effect of segmentation errors.
+0	With a human evaluation we also showed that ATB inter-annotator agreement remains low relative to the WSJ corpus.
+0	Our results suggest that current parsing models would benefit from better annotation consistency and enriched annotation in certain syntactic configurations.
+0	Acknowledgments We thank Steven Bethard, Evan Rosen, and Karen Shiells for material contributions to this work.
+0	We are also grateful to Markus Dickinson, Ali Farghaly, Nizar Habash, Seth Kulick, David McCloskey, Claude Reichard, Ryan Roth, and Reut Tsarfaty for constructive discussions.
+0	The first author is supported by a National Defense Science and Engineering Graduate (NDSEG) fellowship.
+0	This paper is based on work supported in part by DARPA through IBM.
+0	The content does not necessarily reflect the views of the U.S. Government, and no official endorsement should be inferred.

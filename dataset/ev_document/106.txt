@@ -1,0 +1,227 @@
+0	Identification and Treatment of Multiword Expressions applied to Information Retrieval
+0	The extensive use of Multiword Expressions (MWE) in natural language texts prompts more detailed studies that aim for a more adequate treatment of these expressions.
+0	A MWE typically expresses concepts and ideas that usually cannot be expressed by a single word.
+0	Intuitively, with the appropriate treatment of MWEs, the results of an Information Retrieval (IR) system could be improved.
+0	The aim of this paper is to apply techniques for the automatic extraction of MWEs from corpora to index them as a single unit.
+0	Experimental results show improvements on the retrieval of relevant documents when identifying MWEs and treating them as a single indexing unit.
+1	One of the motivations of this work is to investigate if the identification and appropriate treatment of Multiword Expressions (MWEs) in an application contributes to improve results and ultimately lead to more precise man-machine interaction.
+0	The term “multiword expression” has been used to describe a large set of distinct constructions, for instance support verbs, noun compounds, institutionalized phrases and so on.
+0	Calzolari et al.
+0	(2002) defines MWEs as a sequence of words that acts as a single unit at some level of linguistic analysis.
+0	The nature of MWEs can be quite heterogeneous and each of the different classes has specific characteristics, posing a challenge to the implementation of mechanisms that provide unified treatment for them.
+0	For instance, even if a standard system capable of identifying boundaries between words, i.e. a tokenizer, may nevertheless be incapable of recognizing a sequence of words as an MWEs and treating them as a single unit if necessary (e.g. to kick the bucket meaning to die).
+0	For an NLP application to be effective, it requires mechanisms that are able to identify MWEs, handle them and make use of them in a meaningful way (Sag et al., 2002; Baldwin et al., 2003).
+0	It is estimated that the number of MWEs in the lexicon of a native speaker of a language has the same order of magnitude as the number of single words (Jackendoff, 1997).
+0	However, these ratios are probably underestimated when considering domain specific language, in which the specialized vocabulary and terminology are composed mostly by MWEs.
+0	In this paper, we perform an application-oriented evaluation of the inclusion of MWE treatment into an Information Retrieval (IR) system.
+0	IR systems aim to provide users with quick access to data they are interested (BaezaYates and RibeiroNeto, 1999).
+0	Although language processing is not vital to modern IR systems, it may be convenient (Sparck Jones, 1997) and in this scenario, NLP techniques may contribute in the selection of MWEs for indexing as single units in the IR system.
+0	The selection of appropriate indexing terms is a key factor for the quality of IR systems.
+0	In an ideal system, the index terms should correspond to the concepts found in the documents.
+0	If indexing is performed only with the atomic terms, there may be a loss of semantic content of the documents.
+0	For example, if the query was pop star meaning celebrity, and the terms were indexed individually, the relevant documents may not be retrieved and the system would 101 Proceedings of the Workshop on Multiword Expressions: from Parsing and Generation to the Real World (MWE 2011), pages 101–109, Portland, Oregon, USA, 23 June 2011.
+0	Qc 2011 Association for Computational Linguistics return instead irrelevant documents about celestial bodies or carbonated drinks.
+0	In order to investigate the effects of indexing of MWEs for IR, the results of queries are analyzed using IR quality metrics.
+0	This paper is structured as follows: in section 2 we discuss briefly MWEs and some of the challenges they represent.
+0	This is followed in section 3 by a discussion of the materials and methods employed in this paper, and in section 4 of the evaluation performed.
+0	We finish with some conclusions and future work.
+0	The concept of Multiword Expression has been widely viewed as a sequence of words that acts as a single unit at some level of linguistic analysis (Calzolari et al., 2002), or as Idiosyncratic interpretations that cross word boundaries (or spaces) (Sag et al., 2002).
+0	One of the great challenges of NLP is the identification of such expressions, “hidden” in texts of various genres.
+0	The difficulties encountered for identifying Multiword Expressions arise for reasons like: • the difficulty to find the boundaries of a multi- word, because the number of component words may vary, or they may not always occur in a canonical sequence (e.g. rock the boat, rock the seemingly intransigent boat and the bourgeois boat was rocked); • even some of the core components of an MWE may present some variation (e.g. throw NP to the lions/wolves/dogs/?birds/?butterflies); • in a multilingual perspective, MWEs of a source language are often not equivalent to their word-by-word translation in the target language (e.g. guardachuva in Portuguese as umbrella in English and not as ?store rain).
+0	The automatic discovery of specific types of MWEs has attracted the attention of many researchers in NLP over the past years.
+0	With the recent increase in efficiency and accuracy of techniques for preprocessing texts, such as tagging and parsing, these can become an aid in improving the performance of MWE detection techniques.
+0	In terms of practical MWE identification systems, a well known approach is that of Smadja (1993), who uses a set of techniques based on statistical methods, calculated from word frequencies, to identify MWEs in corpora.
+0	This approach is implemented in a lexico- graphic tool called Xtract.
+0	More recently there has been the release of the mwetoolkit (Ramisch et al., 2010) for the automatic extraction of MWEs from monolingual corpora, that both generates and validates MWE candidates.
+0	As generation is based on surface forms, for the validation, a series of criteria for removing noise are provided, including some (language independent) association measures such as mutual information, dice coefficient and maximum likelihood.
+0	Several other researchers have proposed a number of computational techniques that deal with the discovery of MWEs: Baldwin and Villavicencio (2002) for verb-particle constructions, Pearce (2002) and Evert and Krenn (2005) for collocations, Nicholson and Baldwin (2006) for compound nouns and many others.
+0	For our experiments, we used some standard statistical measures such as mutual information, point- wise mutual information, chi-square, permutation entropy (Zhang et al., 2006), dice coefficient, and t-test to extract MWEs from a collection of documents (i.e. we consider the collection of documents indexed by the IR system as our corpus).
+0	Based on the hypothesis that the MWEs can improve the results of IR systems, we carried out an evaluation experiment.
+0	The goal of our evaluation is to detect differences between the quality of the standard IR system, without any treatment for MWEs, and the same system improved with the identification of MWEs in the queries and in the documents.
+0	In this section we describe the different resources and methods used in the experiments.
+0	3.1 Resources and Tools.
+0	For this evaluation we used two large newspaper corpora, containing a high diversity of terms: • Los Angeles Times (Los Angeles, USA1994) • The Herald (Glasgow, Scotland1995) Together, both corpora cover a large set of subjects present in the news published by these newspa pers in the years listed.
+0	The language used is American English, in the case of the Los Angeles Times and British English, in the case of The Herald.
+0	Hereafter, the corpus of the Los Angeles Times will be referred as LA94 and The Herald as GH95.
+0	Together, they contain over 160,000 news articles (Table 1) and each news article is considered as a document.
+0	C or pu s D oc u m en ts L A 9 4 1 1 0 . 2 4 5 G H 9 5 5 6 . 4 7 2 T o t a l 1 6 6 . 7 1 7 Table 1: Total documents The collection of documents, as well as the query topics and the list of relevance judgments (which will be discussed afterwards), were prepared in the context of the CLEF 2008 (Cross Language Evaluation Forum), for the task entitled Robust-WSD (Acosta et al., 2008).
+0	This task aimed to explore the contribution of the disambiguation of words to bilingual or monolingual IR.
+0	The task was to assess the validity of word-sense disambiguation for IR.
+0	Thus, the documents in the corpus have been annotated by a disambiguation system.
+0	The structure of a document contains information about the identifier of a term in a document (TERM ID), the lemma of a term (LEMA) and also its morphosyntactic tag (POS).
+0	In addition, it contains the form in which the term appeared in the text (WF) and information of the term in the WordNet (Miller, 1995; Fellbaum, 1998) as SYNSET SCORE and CODE, both not used for <TERM ID="GH950102000000-126" LEMA="underworld" POS="NN"> <WF>underworld</WF> <SYNSET SCORE="0.5" CODE="06120171-n"/> <SYNSET SCORE="0.5" CODE="06327598-n"/> </TERM> Figure 1: Structure of a term in the original documents In this paper, we extracted the terms located in the LEMA attribute, in other words, in their canonical form (e.g. letter bomb for letter bombs).
+0	The use of lemmas and not the words (e.g. write for wrote, written, etc.) to the formation of the corpus, avoids linguistic variations that can affect the results of the experiments.
+0	As a results, our documents were formed only by lemmas and the next step is the indexing of documents using an IR system.
+0	For this task we used a tool called Zettair (Zettair, 2008), which is a compact textual search engine that can be used both for the indexing and for querying text collections.
+0	Porter’s Stemmer (Porter, 1997) as implemented in Zettair was also used.
+0	Stemming can provide further conflation of related terms.
+0	For example, bomb and bombing were not merged in the lemmatized texts but after stemming they are conflated to a single representation.
+0	After indexing, the next step is the preparation of the query topics.
+0	Just as the corpus, only the lemmas of the query topics were extracted and used.
+0	The test collection has a total of 310 query topics.
+0	The judgment of whether a document is relevant to a query was assigned according to a list of relevant documents, manually prepared and supplied with the material provided by CLEF.
+0	We used Zettair to generate the ranked list of documents retrieved in response to each query.
+0	For each query topic, the 1,000 top scoring documents were selected.
+0	We used the cosine metric to calculate the scores and rank the documents.
+0	Finally, to calculate the retrieval evaluation metrics (detailed in Section 3.5) we used the tool trec eval.
+0	This tool compares the list of retrieved documents (obtained from Zettair) against the list of relevant documents (provided by CLEF).
+0	3.2 Multiword Expression as Single Terms.
+0	In this work, we focused on MWEs composed of exactly two words (i.e. bigrams).
+0	In order to incorporate MWEs as units for the IR system to index, we adopted a very simple heuristics that concatenated together all terms composing an MWE using “ ” (e.g. letter bomb as letter bomb).
+0	Figure 2 exemplifies this concatenation.
+0	Each bigram present in a predefined dictionary and occurring in a document is treated as a single term, for indexing and retrieval purposes.
+0	The rationale was that documents containing specific MWEs can be indexed more adequately than those containing the words of the expression separately.
+0	As a result, retrieval quality should increase.
+0	<TERM ID="GH950102000000-126" LEMA="underworld" POS="NN"> <WF>underworld</WF> <SYNSET SCORE="0.5" CODE="06120171-n"/> <SYNSET SCORE="0.5" CODE="06327598-n"/> </TERM> Original Topic: - What was the role of the Hubble telescope in proving the existence of black holes?
+0	Modified Topic: - what be the role of the hubble telescope in prove the existence of black hole ? black_hole <num>141</num> Figure 2: Modified query.
+0	<title> letter bomb for kiesbauer find information on the explosion of a letter bomb in the studio of the tv channel pro7 presenter arabella kiesbauer . 3le.t3ter_bMombullettitewr_obormdbEtv_xcpharnensesl ions Dictionaries </title> In order to determine the impact of the quality of the dictionary used in the performance of the IR system, we examined several different sources of MWE of varying quality.
+0	The dictionaries containing the MWEs to be inserted into the corpus as a single term, are created by a number of techniques involving automatic and manual extraction.
+0	Below we describe how these MWE dictionaries were created.
+0	• Compound Nouns (CN) - for the creation of this dictionary, we extracted all bigrams contained in the corpus.
+0	Since the number of available bigrams was very large (99,744,811 bi- grams) we filtered them using the information in the original documents, the morphosyntactic tags.
+0	Along with the LEMA field, extracted in the previous procedure, we also extracted the value of the field POS (part-of-speech).
+0	In order to make the experiment feasible, we used only bigrams formed by compound nouns, in other words, when the POS of both words was NN (Noun).
+0	Thus, with bigrams consisting of sequences of NN as a preprocessing step to eliminate noise that could affect the experiment, the number of bigrams with MWE candidates was reduced to 308,871.
+0	The next step was the selection of bigrams that had the highest frequency in the text, so we chose candidates occurring at least ten times in the whole corpus.
+0	As a result, the first list of MWEs was composed by 15,001 bigrams, called D1.
+0	• Best Compound Nouns - after D1, we refined the list with the use of statistical methods.
+0	The methods used were the mutual information and chi-square.
+0	It was necessary to obtain frequency values from Web using the search tool Yahoo!, because despite the number of terms per genre of our corpus would bias the counts.
+0	For this work we used the number of pages in which a term occurs as a measure of frequency.
+0	With the association measures based on web frequencies, we generated a ranking in decreasing order of score for each entry.
+0	We merged the rankings by calculating the average rank between the positions of each MWE; the first 7,500 entries composed the second dictionary, called D2.
+0	• Worst Compound Nouns - this dictionary was created from bigrams that have between five and nine occurrences and are more likely to co- occur by chance.
+0	It was created in order to evaluate whether the choice of the potentially more noisy MWEs entailed a negative effect in the results of IR, compared to the previous dictionaries.
+0	The third dictionary, with 17,328 bi- grams, is called D3.
+0	• Gold Standard - this was created from a sub- list of the Cambridge International Dictionary of English (Procter, 1995), containing MWEs.
+0	Since this list contains all types of MWEs, it was necessary to further filter these to obtain compound nouns only, using morphosyn- tactic information obtained by the TreeTagger (Schmid, 1994), which for English is reported to have an accuracy of 96.36%” (Schmid, 1994).
+0	Formed by 568 MWEs, the fourth dictionary will be called D4.
+0	• Decision Tree - created from the use of the J48 algorithm (Witten and Frank, 2000) from Weka (Hall et al., 2009), a data mining tool.
+0	With this algorithm it is possible to make a MWE classifier in terms of a decision tree.
+0	This requires providing training data with true and false examples of MWE.
+0	The training set contained 1,136 instances, half true (D4) and half false MWEs (taken from D3).
+0	After combining several statistical methods, the best result for classification was obtained with the use of mutual information, chi-square, pointwise mutual information, and Dice.
+0	The model obtained from Weka was applied to test data containing15,001 MWE candidates (D1).
+0	The 12,782 bi tionary, called D5.
+0	• Manual - for comparative purposes, we also #Relevant P recision(P ) = n #Retrieved created two dictionaries by manually evaluating the text of the 310 query topics.
+0	The first dictionary contained all bigrams which would achieve a different meaning if the words were concatenated (e.g. space shuttle).
+0	This dictio #Retrieved #Relevant n #Retrieved Recall(R) = #Relevant (1) (2) nary, was called D6 and contains 254 expressions.
+0	The other one was created by a specialist (linguist) who classified as true or false a list of MWE candidates from the query topics.
+0	The linguist selection of MWEs formed D7 with 178 bigrams.
+0	3.4 Creating Indices.
+0	For the experiments, we needed to manipulate the corpus in different ways, using previously built dictionaries.
+0	The MWEs from dictionaries have been inserted in the corpus as single terms, as described Precision and Recall are set-based measures, therefore, they do not take into consideration the ordering in which the relevant items were retrieved.
+0	In order to evaluate ranked retrieval results the most widely used measurement is the average precision (AvP ).
+0	AvP emphasizes returning more relevant documents earlier in the ranking.
+0	For a set of queries, we calculate the Mean Average Precision (MAP) according to Equation 3 (Manning et al., 2008).
+0	before.
+0	For each dictionary, an index was created in 1 M AP (Q) = |Q| mj 1 P (R ) (3) the IR system.
+0	These indices are described below: 1.
+0	Baseline (BL) - corpus without MWE..
+0	2.
+0	Compound Nouns (CN) - with 15 MWEs of.
+0	D1.
+0	3.
+0	Best CN (BCN) - with 7,500 MWEs of D2..
+0	6.
+0	Decision Tree (DT) - with 12,782 MWEs of.
+0	D5.
+0	7.
+0	Manual 1 (M1) - with 254 MWEs of D6..
+0	8.
+0	Manual 2 (M2) - with 178 MWEs of D7..
+0	3.5 Evaluation Metrics.
+0	To evaluate the results of the IR system, we need to use metrics that estimate how well a user’s query was satisfied by the system.
+0	IR evaluation is based on recall and precision.
+0	Precision (Eq. 1) is the portion of the retrieved documents which is actually relevant to the query.
+0	Recall (Eq. 2) is the fraction of the relevant documents which is retrieved by the |Q| j=1 mj k=1 where |Q| is the number of queries, Rjk is the set of ranked retrieval results from the top result until document dk , and mj is the number of relevant documents for query j. 4 Experiment and Evaluations.
+0	The experiments performed evaluate the insertion of MWEs in results obtained in the IR system.
+0	The analysis is divided into two evaluations: (A) total set of query topics, where an overview is given of the MWE insertion effects and (B) topics modified by MWEs, where we evaluate only the query topics that contain MWEs.
+0	4.1 Evaluation A. This evaluation investigates the effects of inserting MWEs in documents and queries.
+0	After each type of index was generated, MWEs were also included in the query topics, in accordance to the dictionaries used for each index (for Baseline BL, the query topics had no modifications).
+0	With eight corpus variations, we obtained individual results for each one of them.
+0	The results presented in Table 2 were summarized by the ab the MAP for the entire set of query topics.
+0	In total, 6,379 relevant documents are returned for the 310 query topics.
+0	is almost 20% of cases and the WCN, the difference between gain and loss is less than 2%.
+0	Table 3: BCN x Baseline Table 2: Results — Evaluation A. It is possible to see a small improvement in the results for the indices M1 and M2 in relation to the baseline (BL).
+0	This happens because the choice of candidate MWEs was made from the contents of the document topics and not, as with other indices, from the whole corpus.
+0	Considering the indices built with MWEs extracted from the corpus, the best result is index GS.In second place, comes the CN index, with a subtle improvement over the Baseline.
+0	BL surprisingly got a better result than the Best and Worst CN.
+0	The loss in retrieval quality as a result from MWE identification for BCN was not expected.
+0	When comparing the gain or loss in MAP of individual query topics, we can see how the index BCN compares to the Baseline: BCN had better MAP in 149 and worse MAP in 108 cases.
+0	However, the average loss is higher than the average gain, this explains why BL obtains a better result overall.
+0	In order do decide if one run is indeed superior to another, instead of using the absolute MAP value, we chose to calculate a margin of 5%.
+0	The intuition behind this is that in IR, a difference of less than 5% between the results being compared is not considered significant (Buckley and Voorhees, 2000).
+0	To be considered as gain the difference between the values resulting from two different indices for the same query topic should be greater than 5%.
+0	Differences of less than 5% are considered ties.
+0	This way, MAP values of 0.1111 and 0.1122 are considered ties.
+0	Given this margin, we can see in Tables 3 and 4 that the indices BCN and WCN are better compared to the baseline.
+0	In the case of BCN, the gain Table 4: WCN x Baseline Finally, this first experiment guided us toward a deeper evaluation of the query topics that have MWEs, because there is a possibility that the MWE insertions in documents can decrease the accuracy of the system on topics that have no MWE.
+0	4.2 Evaluation B. This evaluation studies in detail the effects on the document retrieval in response to topics in which there were MWEs.
+0	For this purpose, we used the same indices used before and we performed an individual evaluation of the topics, to obtain a better understanding on where the identification of MWEs improves or degrades the results.
+0	As each dictionary was created using a different methodology, the number of expressions contained in each dictionary is also different.
+0	Thus, for each method, the number of query topics considered as having MWEs varies according to the dictionary used.
+0	Table 5 shows the number of query topics containing MWEs for each dictionary used, and as a consequence, the percentage of modified query topics over the complete set of 310 topics.
+0	First, it is interesting to observe the values of MAP for all topics that have been altered by the identification of MWEs.
+0	These values are shown in Table 6.
+0	As shown in Table 6 we verified that the GS index obtained the best result compared to others.
+0	This M Table 5: Topics with MWEs In de x M A P C N 0.
+0	10 11 B C N 0.
+0	09 39 W C N 0.
+0	12 24 G S 0.
+0	23 93 D T 0.
+0	11 93 M 1 0.
+0	12 62 M 2 0.
+0	12 36 Table 6: Results - Evaluation B was somewhat expected since the MWEs in that dictionary are considered “real” MWEs.
+0	After GS, best results were obtained from the manual indices M1 and M2.
+0	The index that we consider as containing the lowest confident MWEs (WCN), obtained better results than Decision Trees, Nominal Compounds and Best Nominal Compounds, in this order.
+0	One possible reason for this to happen is that the number of MWEs inserted is higher than in the other indices.
+0	Compared with the BL, all indices with MWE insertion have improved more than degraded the results, in quantitative terms.
+0	Our largest gain was with the index GS, where 55.56% of the topics have improved, but the same index showed the highest percentage of loss, 22.22%.
+0	Analyzing the WCN, we can identify that this index has the lowest gain compared to all other indices: 32.14%, although having also the lowest loss.
+0	But, 60.71 % of the topics modified had no significant differences compared to the Baseline.
+0	Thus, we can conclude that the WCN index is the one that modifies the least the result of a query.
+0	The indices CN and BCN had a similar result, and knowing that a dictionary used to create BCN is a subset of the dictionary CN, we can conclude that the gain values, choosing the best MWE candidates, <TERM ID="GH950102000000-126" LEMA="underworld" POS="NN"> <WF>underworld</WF> <SYNSET SCORE="0.5" CODE="06120171-n"/> <SYNSET SCORE="0.5" CODE="06327598-n"/> </TERM> Original Topic: - What was the role of the Hubble telescope in proving the existence of black holes?
+0	Modified Topic: - what be the role of the hubble telescope in prove the existence of black hole ? black_hole <num>141</num> <title> letter bomb for kiesbauer find information on the explosion of a letter bomb in the studio of the tv channel pro7 presenter arabella kiesbauer . letter_bomb letter_bomb tv_channel </title> Figure 3: Topic #141 Table 7 shows the top ten scoring documents retrieved for query topic 141 in the baseline.
+0	The relevant document (in bold) is the fourth position in the Baseline.
+0	After inserting the expression letter bomb twice (because it occurs twice in the original topic), and tv channel that were in dictionary D1 used by the CN index, the relevant document is scored higher and as a consequence is returned in the first position of the ranking(Table 8) . The MAP of this topic has increased 75 percentage points, from 0.2500 in Baseline to 1.000 in the CN index.
+0	We see also that the document that was in first position in the Baseline ranking, has its score decreased and was ranked in fourth position in the ranking given by the CN.
+0	This document contained information on a “small bomb located outside the of the Russian embassy” and has is not relevant to topic 141, being properly relegated to a lower position.
+0	An interesting fact about this topic is that only the MWE letter bomb influences the result.
+0	This was verified as in the index BCN, whose dictionary does not have this MWE, the topic was changed only because of the MWE tv channel and there was no gain or loss for the result.
+0	The second highest gain was of M1 index, in topic 173.
+0	The gain was of 28 percentage points.
+0	On.
+0	the other hand, we found a downside in M1 and M2 indices, although they improved results on average, they have reached very high values of loss in some topics.
+0	Po sit io n D o c u m e n t S c o r e P 1 L A 04 30 94 02 30 0.
+0	47 09 00 P 2 G H9 50 823 00 01 05 0.
+0	45 99 94 P 3 G H9 51 120 00 01 82 0.
+0	43 95 36 P 4 G H9 50 610 00 01 64 0.
+0	43 07 84 P 5 G H9 50 614 00 01 22 0.
+0	42 87 66 P 6 L A 09 18 94 04 25 0.
+0	42 84 29 P 7 G H9 50 829 00 00 82 0.
+0	42 29 41 P 8 G H9 50 220 00 01 62 0.
+0	41 19 68 P 9 G H9 50 318 00 01 31 0.
+0	40 60 06 P 1 0 G H9 50 829 00 00 37 0.
+0	40 28 06 Table 7: Ranking for Topic #141 - Baseline Po sit io n D o c u m e n t S c o r e P 1 G H9 50 610 00 01 64 0.
+0	45 79 50 P 2 G H9 50 614 00 01 22 0.
+0	43 67 53 P 3 G H9 50 823 00 01 05 0.
+0	42 39 38 P 4 L A 04 30 94 02 30 0.
+0	42 17 57 P 5 G H9 51 120 00 01 82 0.
+0	40 01 23 P 6 G H9 50 829 00 00 82 0.
+0	39 31 95 P 7 L A 09 18 94 04 25 0.
+0	38 66 13 P 8 G H9 50 705 00 01 00 0.
+0	38 41 16 P 9 G H9 50 220 00 01 62 0.
+0	38 21 57 P 1 0 G H9 50 318 00 01 31 0.
+0	38 04 71 Table 8: Ranking for Topic #141CN In sum, the MWEs insertion seems to improve retrieval bringing more relevant documents, due to a more precise indexing of specific terms.
+0	However, the use of these expressions also brought a negative impact for some cases, because some topics require a semantic analysis to return relevant documents (as for example topic 130, which requires relevant documents to mention the causes of the death of Kurt Cobain — documents which mention his death without mentioning the causes were not considered relevant).
+0	This work consists in investigating the impact of Multiword Expressions on applications, focusing on compound nouns in Information Retrieval systems, and whether a more adequate treatment for these expressions can bring possible improvements in the indexing these expressions.
+0	MWEs are found in all genres of texts and their appropriate use is being targeted for study, both in linguistics and computing, due to the different characteristic variations of this type of expression, which ends up causing problems for the success of computational methods that aim their processing.
+0	In this work we aimed at achieving a better understanding of several important points associated with the use of Multiword Expressions in IR systems.
+0	In general, the MWEs insertion improves the results of retrieval for relevant documents, because the indexing of specific terms makes it easier to retrieve specific documents related to these terms.
+0	Nevertheless, the use of these expressions made the results worse in some c]ases, because some topics require a semantic analysis to return relevant documents.
+0	Some of these documents are related to the query, but do not satisfy all criteria in the query topic.
+0	We conclude also that the quality of MWEs used directly influenced the results.
+0	For future work, we would like to use other MWE types and not just compound nouns as used in this work.
+0	Other methods of extraction and a further study in Named Entities are good themes to complement this subject.
+0	A variation of corpora, different from newspaper articles, because each domain has a specific terminology, can also be an interesting subject for further evaluation.
